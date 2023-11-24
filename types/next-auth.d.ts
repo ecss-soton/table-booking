@@ -7,9 +7,6 @@ declare module "next-auth" {
     interface Session {
         firstName: string | null
         lastName: string | null
-        discord: {
-            tag: string | null
-        }
         microsoft: {
             email: string | null
         }
@@ -26,8 +23,6 @@ declare module "next-auth" {
         lastName: string | null
         displayName: string | null
         sotonId: string | null
-        discordId: string | null
-        discordTag: string | null
     }
     /**
      * Usually contains information about the provider being used
