@@ -103,7 +103,7 @@ export default function Teams({ url, user }: { url: string, user: User }) {
                         </div>
                     </Modal>
                     <div className='flex flex-wrap flex-row items-end'>
-                        <Button className="mx-5" color={!createTeamError ? 'default' : 'red'} disabled={!data?.teams || !user.registered} loading={buttonLoading} onClick={createNewTeam}>
+                        <Button className="mx-5" color={!createTeamError ? 'default' : 'red'} disabled={!data?.teams} loading={buttonLoading} onClick={createNewTeam}>
                             Create new team
                         </Button>
                         <Link href="/" passHref>
@@ -116,18 +116,15 @@ export default function Teams({ url, user }: { url: string, user: User }) {
 
                     <Checkbox className='m-5' checked={showJoinable} label="Only show teams you can join" onChange={(event) => setShowJoinable(event.currentTarget.checked)} />
                 </div>
-                {
-                    !user.registered ? <h3 style={{color:"red"}}>You can only join a team if you have registered.</h3>: <div/>
-                }
                 <div className="flex flex-wrap">
                     {data?.teams ? (data.teams.length == 0 ? null : data.teams.map(v => {
                         if (v.id === data.yourTeam) {
-                            return (<TeamCard key={v.id} userRank={data.yourRank} url={url} registered={user.registered} {...v} />);
+                            return (<TeamCard key={v.id} userRank={data.yourRank} url={url} {...v} />);
                         }
                         if (showJoinable && (v.locked || v.members.length >= 4)) {
                             return null;
                         }
-                        return (<TeamCard key={v.id} url={url} registered={user.registered} {...v}/>);
+                        return (<TeamCard key={v.id} url={url} {...v}/>);
                     })) : <div/>}
 
                 </div>
