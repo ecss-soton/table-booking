@@ -1,12 +1,8 @@
 import {IconLock, IconLockOpen, IconShare} from '@tabler/icons';
-import {
-    Card, Text, Group, Button, ActionIcon, Tooltip, Table, CopyButton, useMantineColorScheme
-} from '@mantine/core';
+import {ActionIcon, Button, Card, CopyButton, Group, Table, Text, Tooltip, useMantineColorScheme} from '@mantine/core';
 import {Team} from '@/types/types';
-import {icons} from '../pages/register';
 import {useState} from 'react';
 import {useSWRConfig} from 'swr';
-import {log} from "util";
 
 export function TeamCard(team: Team & { userRank?: number, url: string, registered: boolean }) {
 
@@ -87,16 +83,6 @@ export function TeamCard(team: Team & { userRank?: number, url: string, register
     const rows = team.members.map(m => {
         return (<tr key={m.name} style={(memberCount += 1) === team.userRank ? {backgroundColor: yourBgColour } : {}}>
             <td>{m.name}</td>
-            <td>{m.discordTag ?? 'N/A'}</td>
-            <td>
-                <div className='flex flex-row w-16 flex-wrap'>
-                    {m.tags.map(t => {
-                        const Icon = icons[t];
-                        return (<Icon key={t}/>);
-                    })}
-                </div>
-            </td>
-            <td>{m.yearOfStudy}</td>
         </tr>);
     });
 
@@ -111,9 +97,6 @@ export function TeamCard(team: Team & { userRank?: number, url: string, register
                     <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Discord</th>
-                        <th>Languages</th>
-                        <th>Year</th>
                     </tr>
                     </thead>
                     <tbody>{rows}</tbody>
