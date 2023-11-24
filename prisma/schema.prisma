@@ -45,14 +45,14 @@ model User {
   displayName String  @db.VarChar(255)
   sotonId     String  @unique @db.VarChar(50) // ec3g21
 
-  checkedIn   Boolean @default(false)
-
-  team           Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId         String?   @db.VarChar(30)
-  joinedTeamTime DateTime?
+  table           Table?     @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  tableId         String?   @db.VarChar(30)
+  joinedTableTime DateTime?
 
   accounts Account[]
   sessions Session[]
+
+  plusOnes String[]
 
   // BUG Next Auth being strange might have to add these columns if you get errors about something not existing
   name          String?   @db.VarChar(255)
@@ -61,7 +61,7 @@ model User {
   image         String?   @db.VarChar(255)
 }
 
-model Team {
+model Table {
   id String @id @db.VarChar(16)
 
   members User[]

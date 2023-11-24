@@ -1,10 +1,12 @@
 import {IconLock, IconLockOpen, IconShare} from '@tabler/icons';
 import {ActionIcon, Button, Card, CopyButton, Group, Table, Text, Tooltip, useMantineColorScheme} from '@mantine/core';
-import {Team} from '@prisma/client';
 import {useState} from 'react';
 import {useSWRConfig} from 'swr';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowTurnUp} from "@fortawesome/free-solid-svg-icons";
+import {User} from "@prisma/client";
 
-export function TeamCard(team: Team & { userRank?: number, url: string }) {
+export function TableCard(table: TableType & { userRank?: number, url: string, overfull: boolean }) {
 
     const { colorScheme } = useMantineColorScheme();
 
@@ -14,7 +16,7 @@ export function TeamCard(team: Team & { userRank?: number, url: string }) {
 
     const {mutate} = useSWRConfig();
 
-    const lockTeam = async () => {
+    const lockTable = async () => {
         setLockButtonLoading(true);
 
         const res = await fetch('/api/v1/lock', {
@@ -22,19 +24,19 @@ export function TeamCard(team: Team & { userRank?: number, url: string }) {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
 
-            body: JSON.stringify({shouldLock: !team.locked})
+            body: JSON.stringify({shouldLock: !table.locked})
         });
 
         if (res.ok) {
-            await mutate('/api/v1/teams', (oldData: any) => {
+            await mutate('/api/v1/tables', (oldData: any) => {
                 // Need to deep copy the data
                 let data: {
-                    yourTeam?: string, yourRank?: number, teams: Team[]
+                    yourTable?: string, yourRank?: number, tables: TableType[]
                 } | undefined = JSON.parse(JSON.stringify(oldData));
                 if (data) {
-                    let cachedTeam = data.teams.find((t) => t.id === team.id);
-                    if (cachedTeam) {
-                        cachedTeam.locked = !team.locked;
+                    let cachedTable = data.tables.find((t) => t.id === table.id);
+                    if (cachedTable) {
+                        cachedTable.locked = !table.locked;
                     }
                 }
                 return data;
@@ -43,7 +45,7 @@ export function TeamCard(team: Team & { userRank?: number, url: string }) {
         }
     };
 
-    const joinTeam = async () => {
+    const joinTable = async () => {
         setJoinButtonLoading(true);
 
         const res = await fetch('/api/v1/join', {
@@ -51,16 +53,16 @@ export function TeamCard(team: Team & { userRank?: number, url: string }) {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
 
-            body: JSON.stringify({team: team.id})
+            body: JSON.stringify({table: table.id})
         });
 
         if (res.ok) {
-            await mutate('/api/v1/teams')
+            await mutate('/api/v1/tables')
             setJoinButtonLoading(false);
         }
     };
 
-    const leaveTeam = async () => {
+    const leaveTable = async () => {
         setLeaveButtonLoading(true);
 
         const res = await fetch('/api/v1/leave', {
@@ -68,11 +70,11 @@ export function TeamCard(team: Team & { userRank?: number, url: string }) {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
 
-            body: JSON.stringify({team: team.id})
+            body: JSON.stringify({table: table.id})
         });
 
         if (res.ok) {
-            await mutate('/api/v1/teams')
+            await mutate('/api/v1/tables')
             setLeaveButtonLoading(false);
         }
     }
@@ -80,9 +82,13 @@ export function TeamCard(team: Team & { userRank?: number, url: string }) {
     const yourBgColour = colorScheme === 'dark' ? '#1e1e23' : '#e0e0e0'
 
     let memberCount = -1;
-    const rows = team.members.map(m => {
-        return (<tr key={m.name} style={(memberCount += 1) === team.userRank ? {backgroundColor: yourBgColour } : {}}>
-            <td>{m.name}</td>
+    const rows = table.members.map(m => {
+        return (<tr key={m.name} style={(memberCount += 1) === table.userRank ? {backgroundColor: yourBgColour } : {}}>
+            <td>{m.name}{m.plusOnes.map(name => {
+                return <div><FontAwesomeIcon icon={faArrowTurnUp} rotation={90} /> {name}
+                </div>
+            })}</td>
+
         </tr>);
     });
 
@@ -91,36 +97,31 @@ export function TeamCard(team: Team & { userRank?: number, url: string }) {
 
             <Card.Section className="p-4" mt="md">
                 <Text size="lg" weight={500}>
-                    Members
+                    Table
                 </Text>
                 <Table>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                    </tr>
-                    </thead>
                     <tbody>{rows}</tbody>
                 </Table>
             </Card.Section>
 
             <Group mt="xs">
-                <Button radius="md" disabled={team.locked || team.userRank !== undefined || team.members.length >= 4}
-                        loading={joinButtonLoading} onClick={joinTeam}>
-                    Join team
+                <Button radius="md" disabled={table.locked || table.userRank !== undefined || table.overfull}
+                        loading={joinButtonLoading} onClick={joinTable}>
+                    Join Table
                 </Button>
                 {
-                    (team.userRank !== undefined) &&
-                    <Button radius="md" loading={leaveButtonLoading} onClick={leaveTeam}>
-                        Leave team
+                    (table.userRank !== undefined) &&
+                    <Button radius="md" loading={leaveButtonLoading} onClick={leaveTable}>
+                        Leave Table
                     </Button>
                 }
                 {
-                    (team.userRank === 0) &&
+                    (table.userRank === 0) &&
                     <>
-                        <ActionIcon variant="default" radius="md" size={36} loading={lockButtonLoading} onClick={lockTeam}>
-                            {team.locked ? <IconLock size={18} stroke={1.5}/> : <IconLockOpen size={18} stroke={1.5}/>}
+                        <ActionIcon variant="default" radius="md" size={36} loading={lockButtonLoading} onClick={lockTable}>
+                            {table.locked ? <IconLock size={18} stroke={1.5}/> : <IconLockOpen size={18} stroke={1.5}/>}
                         </ActionIcon>
-                        <CopyButton value={`${team.url}teams?join=${team.id}`}>
+                        <CopyButton value={`${table.url}tables?join=${table.id}`}>
                             {({ copied, copy }) => (
                                 <Tooltip label="Copied!" withArrow opened={copied}>
                                     <ActionIcon variant={copied ? 'filled' : 'default'} radius="md" size={36} onClick={copy} color={copied ? 'teal' : 'dark'}>

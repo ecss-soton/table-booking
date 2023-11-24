@@ -1,11 +1,11 @@
-# Hackathon team registration
+# Table booking
 
-A service to create and join teams to compete in a hackathon or other competition
+A service to create and join tables for sit down meals
 
 TODO
 - Add more info to teams page
-- Display an error message if you try and join a team that doens't exist
-- Have follow through links so you can click a link to join a team and register at the same time
+- Display an error message if you try and join a table that doesn't exist
+- Have follow through links so you can click a link to join a table and register at the same time
 - Allow profile editing
 - Allow team leaders to kick team members
 
@@ -14,13 +14,13 @@ TODO
 Clone the project
 
 ```bash
-  git clone https://github.com/ecss-soton/team-registration.git
+  git clone https://github.com/ecss-soton/table-booking.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd team-registration
+  cd table-booking
 ```
 
 Install dependencies
