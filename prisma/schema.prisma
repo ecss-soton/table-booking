@@ -53,6 +53,7 @@ model User {
   sessions Session[]
 
   plusOnes String[]
+  seatPos Int?
 
   // BUG Next Auth being strange might have to add these columns if you get errors about something not existing
   name          String?   @db.VarChar(255)
