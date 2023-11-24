@@ -2,8 +2,11 @@ import {IconLock, IconLockOpen, IconShare} from '@tabler/icons';
 import {ActionIcon, Button, Card, CopyButton, Group, Table, Text, Tooltip, useMantineColorScheme} from '@mantine/core';
 import {useState} from 'react';
 import {useSWRConfig} from 'swr';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowTurnUp} from "@fortawesome/free-solid-svg-icons";
+import {User} from "@prisma/client";
 
-export function TableCard(table: TableType & { userRank?: number, url: string }) {
+export function TableCard(table: TableType & { userRank?: number, url: string, overfull: boolean }) {
 
     const { colorScheme } = useMantineColorScheme();
 
@@ -81,7 +84,11 @@ export function TableCard(table: TableType & { userRank?: number, url: string })
     let memberCount = -1;
     const rows = table.members.map(m => {
         return (<tr key={m.name} style={(memberCount += 1) === table.userRank ? {backgroundColor: yourBgColour } : {}}>
-            <td>{m.name}</td>
+            <td>{m.name}{m.plusOnes.map(name => {
+                return <div><FontAwesomeIcon icon={faArrowTurnUp} rotation={90} /> {name}
+                </div>
+            })}</td>
+
         </tr>);
     });
 
@@ -90,20 +97,15 @@ export function TableCard(table: TableType & { userRank?: number, url: string })
 
             <Card.Section className="p-4" mt="md">
                 <Text size="lg" weight={500}>
-                    Members
+                    Table
                 </Text>
                 <Table>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                    </tr>
-                    </thead>
                     <tbody>{rows}</tbody>
                 </Table>
             </Card.Section>
 
             <Group mt="xs">
-                <Button radius="md" disabled={table.locked || table.userRank !== undefined || table.members.length >= 4}
+                <Button radius="md" disabled={table.locked || table.userRank !== undefined || table.overfull}
                         loading={joinButtonLoading} onClick={joinTable}>
                     Join Table
                 </Button>

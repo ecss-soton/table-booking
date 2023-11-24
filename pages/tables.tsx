@@ -90,12 +90,12 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                         title="Join this table?"
                     >
                         <div>
-                            <Link href="/Tables" passHref>
+                            <Link href="/tables" passHref>
                                 <Button color="green" variant='filled' className='' component="a" onClick={joinTable}>
                                     Accept
                                 </Button>
                             </Link>
-                            <Link href="/Tables" passHref>
+                            <Link href="/tables" passHref>
                                 <Button variant="outline" color="red" className='mx-5' component="a" onClick={() => setjoinedFromCode(false)}>
                                     Reject
                                 </Button>
@@ -118,13 +118,15 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                 </div>
                 <div className="flex flex-wrap">
                     {data?.tables ? (data.tables.length == 0 ? null : data.tables.map(v => {
+                        const userCount = 1 + user.plusOnes.length;
+                        const realMemberCount = v.members.reduce((sum, m) => m.plusOnes.length + 1 + sum, 0);
                         if (v.id === data.yourTable) {
-                            return (<TableCard key={v.id} userRank={data.yourRank} url={url} {...v} />);
+                            return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} userRank={data.yourRank} url={url} {...v} />);
                         }
-                        if (showJoinable && (v.locked || v.members.length >= 4)) {
+                        if (showJoinable && (v.locked || realMemberCount > (10 - userCount))) {
                             return null;
                         }
-                        return (<TableCard key={v.id} url={url} {...v}/>);
+                        return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} url={url} {...v}/>);
                     })) : <div/>}
 
                 </div>

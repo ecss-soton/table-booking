@@ -50,8 +50,6 @@ export default function Home({ session, user, url, table }: { session: Session, 
 
                 <div className='m-5'>
                     {!table && <p>You do not have a table yet and will be randomly assigned a seat</p>}
-                    {(table && !table.timeslot) && <p>Book a slot</p>}
-                    {(table && table.timeslot) && <p>Your slot is at {table.timeslot}</p>}
                 </div>
 
 

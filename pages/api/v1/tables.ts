@@ -64,6 +64,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
         locked: table.locked, id: table.id, members: table.members.map((member) => {
           return {
             name: member.displayName ?? '',
+            plusOnes: member.plusOnes ?? [],
           };
         })
       };

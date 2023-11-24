@@ -44,6 +44,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             error: true, message: 'table parameter must be a string id.',
         });
 
+        if (user.tableId == req.body.table) return res.status(405).json({
+            error: true, message: 'already in table.',
+        });
+
         const table = await prisma.table.findFirst({
             where: {
                 id: req.body.table
@@ -52,15 +56,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             }
         });
 
-        if (!table) return res.status(405).json({
-            error: true, message: 'table parameter must be between 0 and number of tables.',
-        });
+        if (!table) {
+            return res.status(405).json({
+                error: true, message: 'table parameter must be between 0 and number of tables.',
+            });
+        }
 
-        if (table.members.length >= 4 || (!req.body.fromCode && table.locked)) return res.status(405).json({
-            error: true, message: 'table is already filled or locked.',
-        });
+        const userCount = 1 + user.plusOnes.length;
+        const realMemberCount = table.members.reduce((sum, m) => m.plusOnes.length + 1 + sum, 0);
 
-        const user = await prisma.user.update({
+        if (realMemberCount > (10 - userCount)  || (!req.body.fromCode && table.locked)) {
+            return res.status(405).json({
+                error: true, message: 'table is already filled or locked.',
+            });
+        }
+
+
+        const updatedUser = await prisma.user.update({
             where: {
                 id: attemptedAuth.id,
             }, data: {
@@ -68,7 +80,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             }
         });
 
-        if (!user) return res.status(405).json({
+        if (!updatedUser) return res.status(405).json({
             error: true, message: 'table does not exist.',
         });
 
