@@ -29,9 +29,6 @@ export const authOptions: NextAuthOptions = {
             // Send properties to the client, like an access_token from a provider.
             session.firstName = user.firstName;
             session.lastName = user.lastName;
-            session.discord = {
-                tag: user.discordTag,
-            };
             session.microsoft = {
                 email: user.sotonId + '@soton.ac.uk',
             };
@@ -72,8 +69,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 lastName: data.lastName,
                 displayName: `${data.firstName} ${data.lastName} (${data.sotonId})`,
                 sotonId: data.sotonId,
-                discordId: data.discordId,
-                discordTag: data.discordTag,
             }
         } catch {
             console.log('Lol')
@@ -95,9 +90,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 lastName: sotonData.surname,
                 displayName: sotonData.displayName,
                 sotonId: sotonData.mail.split('@')[0],
-
-                discordId: null,
-                discordTag: null,
 
             }
 

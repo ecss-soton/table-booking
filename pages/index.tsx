@@ -1,132 +1,61 @@
-import Head from "next/head";
-import {useSession} from "next-auth/react";
-import {LoginButton} from "@/components/LoginButton";
-import {MainTimeline} from "@/components/Timeline"
 import {Session, unstable_getServerSession} from "next-auth";
 import {authOptions} from "./api/auth/[...nextauth]";
-import { IncomingMessage, ServerResponse } from "http";
-import { NextApiRequest, NextApiResponse } from "next";
-import { NextApiRequestCookies } from "next/dist/server/api-utils";
-import {User,Team} from "@prisma/client";
+import {IncomingMessage, ServerResponse} from "http";
+import {NextApiRequest, NextApiResponse} from "next";
+import {NextApiRequestCookies} from "next/dist/server/api-utils";
+import {Team, User} from "@prisma/client";
 import prisma from "../prisma/client";
-import {Button, Text, Image, Tabs, useMantineColorScheme, ActionIcon, Badge} from "@mantine/core";
+import {Button, Text, useMantineColorScheme} from "@mantine/core";
 import Link from "next/link";
 import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faDiscord} from "@fortawesome/free-brands-svg-icons";
-import {IconUsers, IconTimeline, IconSun, IconMoonStars, IconUserCircle, IconCertificate} from "@tabler/icons";
-import {TeamCard} from "@/components/TeamCard";
-import {CvUpload} from "@/components/CvUpload";
 import {useRouter} from "next/router";
-import {useRef} from "react";
-import {Profile} from "@/components/Profile";
 
 export default function Home({ session, user, url, team }: { session: Session, user: User, url: string, team: Team }) {
-
-    const router = useRouter()
-    let { tab } = router.query
-
-    if (Array.isArray(tab)) tab = tab[0]
-
-    const tabs = ['profile', 'timeline', 'team', 'cv']
-    if (tab && !tabs.includes(tab)) tab = undefined
 
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const dark = colorScheme === 'dark';
 
     return (
         <div>
-            <div className='absolute top-2 right-2'>
-                <ActionIcon
-                    variant="outline"
-                    color={dark ? 'yellow' : 'blue'}
-                    onClick={() => toggleColorScheme()}
-                    title="Toggle color scheme"
-                >
-                    {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
-                </ActionIcon>
-            </div>
 
 
-            <main className="flex flex-col items-center justify-center w-screen flex-1 px-2 text-center">
+            <main className="flex flex-col items-center justify-center w-screen flex-1 p-8 text-center">
 
                 <div className='flex flex-row justify-center'>
                     {dark ? <img
                         className='max-h-72'
-                        src="./AH_white_text.png"
+                        src="./WinterBallGF_1.png"
                         alt="Aleios ECSS hackathon logo"
                     /> : <img
                         className='max-h-72'
-                        src="./AH_black_text.png"
+                        src="./WinterBallGF_1.png"
                         alt="Aleios ECSS hackathon logo"
                     />}
 
                 </div>
 
 
-                <div>
+                <div className="mt-12">
                     <Text>
-                        Welcome to the second ECSS hackathon of this academic year!
-                        Meet us in <Text variant="link" component="a" href="https://data.southampton.ac.uk/building/16.html">Building 16</Text> on Saturday 11th February at 10am.
+                        Email society@ecs.soton.ac.uk if you have a complex seating requirement
                     </Text>
 
-                    <div className='flex flex-row flex-wrap justify-center'>
-                        <Link href="https://discord.gg/WZQzcsFKZq" passHref>
-                            <Button
-                                styles={{ root: { backgroundColor: '#5865F2', '&:hover': { backgroundColor: '#3c48d2' } } }}
-                                leftIcon={<FontAwesomeIcon icon={faDiscord} className='text-white text-lg h-4 w-5'/>}
-                                target='_blank'
-                                component="a"
-                                className='m-3'>
-                                Join discord
-                            </Button>
-                        </Link>
-
+                    <div className='flex flex-row flex-wrap justify-center mt-5'>
                         <Link href="/teams" passHref>
-                            <Button className='m-3' component="a">View teams</Button>
+                            <Button className='m-3' component="a">Choose table</Button>
                         </Link>
-
-                        {new Date() > new Date("12 february 2023 11:00:00") && <Link href="/submit" passHref>
-                            <Button variant="outline" className='m-3' component="a">Submit your project</Button>
-                        </Link>}
                     </div>
-
 
                 </div>
 
+                <div className='m-5'>
+                    {!team && <p>You do not have a table yet and will be randomly assigned a seat</p>}
+                    {(team && !team.timeslot) && <p>Book a slot</p>}
+                    {(team && team.timeslot) && <p>Your slot is at {team.timeslot}</p>}
+                </div>
 
-                <Tabs defaultValue={tab || "timeline"} className='w-screen'>
-                    <Tabs.List position="center">
-                        <Tabs.Tab value="timeline" icon={<IconTimeline size={14} />}>Timeline</Tabs.Tab>
-                        <Tabs.Tab value="team" icon={<IconUsers size={14} />}>Your Team</Tabs.Tab>
-                        <Tabs.Tab value="profile" icon={<IconUserCircle size={14} />}>Profile</Tabs.Tab>
-                        <Tabs.Tab
-                            value="cv"
-                            icon={<IconCertificate size={14} />}
-                            rightSection={!user.cvFileName && <Badge>NEW</Badge>}
-                        >CV Upload</Tabs.Tab>
-                    </Tabs.List>
 
-                    <Tabs.Panel value="timeline" pt="xs">
-                        <div className='m-10 flex justify-center'>
-                            <MainTimeline user={user}/>
-                        </div>
-                    </Tabs.Panel>
 
-                    <Tabs.Panel value="team" pt="xs">
-                        {!team && <p>You do not have a team yet</p>}
-                        {(team && !team.timeslot) && <p>Book a slot</p>}
-                        {(team && team.timeslot) && <p>Your slot is at {team.timeslot}</p>}
-                    </Tabs.Panel>
-
-                    <Tabs.Panel value="profile" pt="xs">
-                        <Profile user={user}/>
-                    </Tabs.Panel>
-
-                    <Tabs.Panel value="cv" pt="xs">
-                        <CvUpload fileName={user.cvFileName || ''}/>
-                    </Tabs.Panel>
-                </Tabs>
 
 
 
@@ -150,37 +79,6 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
         }
     }
 
-    if (!session?.discord.tag) {
-
-        try {
-            const sotonVerifyData = await axios({
-                method: 'GET',
-                url: `https://sotonverify.link/api/v2/user?sotonId=${session.microsoft.email.split('@')[0]}`,
-                headers: {
-                    Authorization: String(process.env.SOTON_VERIFY_API_AUTH)
-                },
-                data: {
-                    guildId: '1008673689665032233',
-                }
-            })
-
-            await prisma.user.update({
-                data: {
-                    discordTag: sotonVerifyData.data.discordTag,
-                    discordId: sotonVerifyData.data.discordId,
-                },
-                where: {
-                    sotonId: session.microsoft.email.split('@')[0],
-                }
-            })
-
-        } catch {
-            console.log('get fucked')
-        }
-
-
-    }
-
     const user = await prisma.user.findUnique({
         where: {
             sotonId: session.microsoft.email.split('@')[0],
@@ -189,10 +87,6 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
             team: true
         },
     });
-
-    if (user) {
-        user.cv = null
-    }
 
 
     return {
