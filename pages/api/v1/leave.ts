@@ -4,7 +4,7 @@ import {unstable_getServerSession} from 'next-auth';
 import {authOptions} from '../auth/[...nextauth]';
 
 // interface RequestData {
-//   team?: string
+//   table?: string
 // }
 
 interface ResponseError {
@@ -31,12 +31,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 id: attemptedAuth.id,
             },
             data: {
-                teamId: null,
-                joinedTeamTime: null
+                tableId: null,
+                joinedTableTime: null
             }
         });
 
-        await prisma.team.deleteMany({
+        await prisma.table.deleteMany({
             where: {
                 members: {
                     none: {}
@@ -47,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         res.status(200).json({});
     } catch {
         return res.status(400).json({
-            error: true, message: 'There was an error leaving that team',
+            error: true, message: 'There was an error leaving that table',
         });
     }
 }

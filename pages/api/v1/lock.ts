@@ -39,51 +39,51 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     }
   });
 
-  let team;
-  if (user?.teamId) {
-    team = await prisma.team.findUnique({
+  let table;
+  if (user?.tableId) {
+    table = await prisma.table.findUnique({
       where: {
-        id: user.teamId
+        id: user.tableId
       },
       include: {
         members: {
           orderBy: {
-            joinedTeamTime: "asc"
+            joinedTableTime: "asc"
           }
         }
       }
     })
   }
 
-  if (!user || !team) return res.status(404).json({
-    error: true, message: 'Could not find user or user not in a team.',
+  if (!user || !table) return res.status(404).json({
+    error: true, message: 'Could not find user or user not in a table.',
   });
 
-  if (team.members[0].id !== user.id) return res.status(405).json({
+  if (table.members[0].id !== user.id) return res.status(405).json({
     error: true, message: 'The user does not have the right rank.',
   });
 
-  if (team.locked === req.body.shouldLock) return res.status(405).json({
-    error: true, message: 'The team is already locked/unlocked.',
+  if (table.locked === req.body.shouldLock) return res.status(405).json({
+    error: true, message: 'The table is already locked/unlocked.',
   });
 
-  const updateTeam = await prisma.team.update({
+  const updateTable = await prisma.table.update({
     where: {
-      id: team.id
+      id: table.id
     },
     data: {
-      locked: !team.locked
+      locked: !table.locked
     }
   })
 
 
-  if (!updateTeam) {
+  if (!updateTable) {
     return res.status(500).json({
-      error: true, message: 'Unable to update team',
+      error: true, message: 'Unable to update table',
     });
   }
 
   res.status(200).json({
-    locked: updateTeam.locked
+    locked: updateTable.locked
   });
 }

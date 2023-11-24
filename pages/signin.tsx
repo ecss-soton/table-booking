@@ -64,5 +64,5 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
         }
     }
 
-    return {}
+    return {props: {}}
 }
