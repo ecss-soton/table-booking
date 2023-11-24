@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../prisma/client';
-import { Team } from '@/types/types';
+
 import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
+import {Team} from "@prisma/client";
 
 interface ResponseData {
   yourTeam?: string,
@@ -63,9 +64,6 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
         locked: team.locked, id: team.id, members: team.members.map((member) => {
           return {
             name: member.displayName ?? '',
-            discordTag: member.discordTag ?? undefined,
-            tags: member.tags,
-            yearOfStudy: member.yearOfStudy ?? undefined
           };
         })
       };

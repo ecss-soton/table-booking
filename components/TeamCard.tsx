@@ -1,6 +1,6 @@
 import {IconLock, IconLockOpen, IconShare} from '@tabler/icons';
 import {ActionIcon, Button, Card, CopyButton, Group, Table, Text, Tooltip, useMantineColorScheme} from '@mantine/core';
-import {Team} from '@/types/types';
+import {Team} from '@prisma/client';
 import {useState} from 'react';
 import {useSWRConfig} from 'swr';
 

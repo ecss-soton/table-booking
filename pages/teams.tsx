@@ -1,7 +1,7 @@
 import {TeamCard} from '@/components/TeamCard';
 import {Button, Card, Checkbox,TextInput, Notification, Modal} from '@mantine/core';
 import {EventHandler, KeyboardEvent, KeyboardEventHandler, useRef, useState} from 'react';
-import {SubmissionForm, Team} from '@/types/types';
+import {Team} from '@prisma/client';
 import useSWR from 'swr';
 import fetcher from '../middleware/fetch';
 import Link from "next/link";
