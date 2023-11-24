@@ -5,6 +5,7 @@ import {useSWRConfig} from 'swr';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowTurnUp} from "@fortawesome/free-solid-svg-icons";
 import {User} from "@prisma/client";
+import Link from "next/link";
 
 export function TableCard(table: TableType & { userRank?: number, url: string, overfull: boolean }) {
 
@@ -83,10 +84,10 @@ export function TableCard(table: TableType & { userRank?: number, url: string, o
 
     let memberCount = -1;
     const rows = table.members.map(m => {
+        // TODO sort this by seat position
         return (<tr key={m.name} style={(memberCount += 1) === table.userRank ? {backgroundColor: yourBgColour } : {}}>
             <td>{m.name}{m.plusOnes.map(name => {
-                return <div><FontAwesomeIcon icon={faArrowTurnUp} rotation={90} /> {name}
-                </div>
+                return <div><FontAwesomeIcon icon={faArrowTurnUp} rotation={90} /> {name}</div>
             })}</td>
 
         </tr>);
@@ -111,16 +112,18 @@ export function TableCard(table: TableType & { userRank?: number, url: string, o
                 </Button>
                 {
                     (table.userRank !== undefined) &&
-                    <Button radius="md" loading={leaveButtonLoading} onClick={leaveTable}>
-                        Leave Table
-                    </Button>
-                }
-                {
-                    (table.userRank === 0) &&
                     <>
-                        <ActionIcon variant="default" radius="md" size={36} loading={lockButtonLoading} onClick={lockTable}>
-                            {table.locked ? <IconLock size={18} stroke={1.5}/> : <IconLockOpen size={18} stroke={1.5}/>}
-                        </ActionIcon>
+                        <Button radius="md" loading={leaveButtonLoading} onClick={leaveTable}>
+                            Leave Table
+                        </Button>
+
+                        <Link href="/seat-selection" passHref>
+                            <Button variant='outline' component="a">
+                                Choose Seat
+                            </Button>
+                        </Link>
+                    </>
+                }
                         <CopyButton value={`${table.url}tables?join=${table.id}`}>
                             {({ copied, copy }) => (
                                 <Tooltip label="Copied!" withArrow opened={copied}>
@@ -130,6 +133,13 @@ export function TableCard(table: TableType & { userRank?: number, url: string, o
                                 </Tooltip>
                             )}
                         </CopyButton>
+                {
+                    (table.userRank === 0) &&
+                    <>
+                        <ActionIcon variant="default" radius="md" size={36} loading={lockButtonLoading} onClick={lockTable}>
+                            {table.locked ? <IconLock size={18} stroke={1.5}/> : <IconLockOpen size={18} stroke={1.5}/>}
+                        </ActionIcon>
+
                     </>
                 }
             </Group>
