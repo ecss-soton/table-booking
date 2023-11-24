@@ -61,6 +61,15 @@ model User {
   image         String?   @db.VarChar(255)
 }
 
+// Pureley for importing the csv file of ticketed users to restrict logins
+model TicketHolders {
+  id String @id @default(cuid()) @db.VarChar(30)
+
+  name String @db.VarChar(255)
+  sotonId String @db.VarChar(50)
+  plusOneName String? @db.VarChar(255)
+}
+
 model Table {
   id String @id @db.VarChar(16)
 
