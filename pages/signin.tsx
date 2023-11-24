@@ -1,21 +1,15 @@
-import {Session, unstable_getServerSession} from "next-auth";
-import {User} from "@prisma/client";
-import Head from "next/head";
-import {MainTimeline} from "@/components/Timeline";
+import {unstable_getServerSession} from "next-auth";
 import {LoginButton} from "@/components/LoginButton";
 import {IncomingMessage, ServerResponse} from "http";
 import {NextApiRequestCookies} from "next/dist/server/api-utils";
 import {NextApiRequest, NextApiResponse} from "next";
 import {authOptions} from "./api/auth/[...nextauth]";
-import prisma from "../prisma/client";
-import {ActionIcon, Button, Text, useMantineColorScheme} from "@mantine/core";
-import {signIn, useSession} from "next-auth/react";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import {IconMoonStars, IconSun} from "@tabler/icons";
+import {Text, useMantineColorScheme} from "@mantine/core";
+import {useSession} from "next-auth/react";
+import {useRouter} from "next/router";
 
 // @ts-ignore
-export default function SignIn({ url }) {
+export default function SignIn() {
 
     const router = useRouter();
 
@@ -29,58 +23,28 @@ export default function SignIn({ url }) {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
 
-            <div className='absolute top-2 right-2'>
-                <ActionIcon
-                    variant="outline"
-                    color={dark ? 'yellow' : 'blue'}
-                    onClick={() => toggleColorScheme()}
-                    title="Toggle color scheme"
-                >
-                    {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
-                </ActionIcon>
-            </div>
-
-            <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
+            <main className="flex flex-col items-center justify-center w-full flex-1 px-5 text-center">
 
                 <div className='flex flex-row justify-center'>
                     {dark ? <img
                         className='max-h-72'
-                        src="./AH_white_text.png"
-                        alt="Aleios ECSS hackathon logo"
+                        src="./WinterBallGF_1.png"
+                        alt="ECSS Winter ball logo"
                     /> : <img
                         className='max-h-72'
-                        src="./AH_black_text.png"
-                        alt="Aleios ECSS hackathon logo"
+                        src="./WinterBallGF_1.png"
+                        alt="ECSS Winter ball logo"
                     />}
 
                 </div>
 
-                <h1 className="font-bold text-6xl mt-10">ECSS Hackathon registration</h1>
+                <h1 className="font-bold text-4xl mt-10">ECSS Winter Ball table selection</h1>
 
                 <Text className='my-5'>
-                    Get 24 hours to code a thing around a theme.
-                    Login with your university account to register, join a team and see all the details!
+                    Login with your university account to select a table so you can sit with your friends!
                 </Text>
 
                 <LoginButton/>
-
-                {
-                    (session && !session.discord?.tag) &&
-                    <Link href="/" passHref>
-                        <Button className='m-5' component="a">
-                            Sign in without discord
-                        </Button>
-                    </Link>
-                }
-
-                {
-                    (session && !session.discord?.tag) &&
-                    <Link href={`https://sotonverify.link?callback=${url}`} passHref>
-                        <Button className='m-5' component="a">
-                            Sign in with discord
-                        </Button>
-                    </Link>
-                }
 
             </main>
         </div>
@@ -91,16 +55,7 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
 
     const session = await unstable_getServerSession(context.req, context.res, authOptions)
 
-    // if (session && !session?.discord.tag) {
-    //     return {
-    //         redirect: {
-    //             destination: `https://sotonverify.link?callback=${process.env.NEXTAUTH_URL}`,
-    //             permanent: false,
-    //         },
-    //     }
-    // }
-
-    if (session && session.discord.tag) {
+    if (session) {
         return {
             redirect: {
                 destination: '/',
@@ -109,9 +64,5 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
         }
     }
 
-    return {
-        props: {
-            url: process.env.NEXTAUTH_URL
-        },
-    }
+    return {}
 }
