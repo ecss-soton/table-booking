@@ -26,7 +26,7 @@ export default function Tables({ url, user }: { url: string, user: User }) {
     }>('/api/v1/tables', fetcher, {refreshInterval: 3000});
 
     const [buttonLoading, setButtonLoading] = useState(false);
-    const [showJoinable, setShowJoinable] = useState(false);
+    const [showJoinable, setShowJoinable] = useState(true);
     const [createTableError, setCreateTableError] = useState(false);
 
     const createNewTable = async () => {
