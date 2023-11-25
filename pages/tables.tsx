@@ -114,7 +114,7 @@ export default function Tables({ url, user }: { url: string, user: User }) {
 
                 </div>
                 <div className="flex flex-wrap">
-                    {data?.tables ? (data.tables.length == 0 ? null : data.tables.map(v => {
+                    {data?.tables ? (data.tables.length == 0 ? <p>There are not currently any tables you can join</p> : data.tables.map(v => {
                         const userCount = 1 + user.plusOnes.length;
                         // @ts-ignore
                         const realMemberCount = v.members.reduce((sum, m) => m.plusOnes.length + 1 + sum, 0);
@@ -125,7 +125,7 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                             return <></>;
                         }
                         return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} url={url} {...v}/>);
-                    })) : <div/>}
+                    })) : <p>There are not currently any tables you can join</p>}
 
                 </div>
             </div>
