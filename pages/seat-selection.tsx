@@ -50,13 +50,11 @@ export default function Tables({url, user, userTable}: { url: string, user: User
     const [currentSeatPos, setCurrentSeatPos] = useState(0);
 
 
-
     const router = useRouter()
 
     if (!userTable) {
         return router.push('/tables');
     }
-
 
 
     const updateSeat = async () => {
@@ -97,6 +95,24 @@ export default function Tables({url, user, userTable}: { url: string, user: User
         )
 
     });
+
+    const getMembers = () => {
+        const allMembers: string[] = [];
+
+        if (!data?.table?.members) return allMembers;
+
+        for (const m of data?.table?.members) {
+            allMembers.push(m.name);
+
+            if (m.plusOnes) {
+                for (const p of m.plusOnes) {
+                    allMembers.push(p);
+                }
+            }
+        }
+
+        return allMembers;
+    }
 
 
     return (
@@ -171,10 +187,10 @@ export default function Tables({url, user, userTable}: { url: string, user: User
                                 </Text>
                                 <MantineTable>
                                     <thead>
-                                        <tr>
-                                            <th>Seat number</th>
-                                            <th>Name</th>
-                                        </tr>
+                                    <tr>
+                                        <th>Seat number</th>
+                                        <th>Name</th>
+                                    </tr>
                                     </thead>
                                     <tbody>{rows}</tbody>
                                 </MantineTable>
@@ -185,7 +201,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
                                 <NativeSelect
                                     // @ts-ignore
-                                    data={userTable.members.map(n => `${n.displayName}`)}
+                                    data={getMembers()}
                                     label={`Select who should sit at seat ${currentSeatPos + 1}`}
                                     onChange={(event) => {
                                         setSelectedUser(event.currentTarget.value)
