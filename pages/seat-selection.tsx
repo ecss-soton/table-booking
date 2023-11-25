@@ -117,7 +117,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
     return (
         <>
-            <div className='flex flex-col items-center justify-center w-full flex-1 px-20 text-center'>
+            <div className='flex flex-col items-center justify-center w-full flex-1 px-5 text-center'>
                 <h1 className="font-bold text-2xl m-2">Choose your seat</h1>
                 <div className="flex flex-wrap flex-col">
                     <div className='flex flex-wrap flex-row items-end'>
