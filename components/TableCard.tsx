@@ -105,7 +105,7 @@ export function TableCard(table: TableType & { userRank?: number, url: string, o
                 </Table>
             </Card.Section>
 
-            <Group mt="xs">
+            <Group>
                 <Button radius="md" disabled={table.locked || table.userRank !== undefined || table.overfull}
                         loading={joinButtonLoading} onClick={joinTable}>
                     Join Table

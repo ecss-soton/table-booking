@@ -16,6 +16,10 @@ import {authOptions} from "./api/auth/[...nextauth]";
 import prisma from "../prisma/client";
 import {User} from "@prisma/client";
 import axios from "axios";
+import styles from "../styles/circle.module.css";
+import {IconArmchair} from "@tabler/icons";
+import {Seat} from "@/components/Seat";
+
 
 export default function Tables({ url, user }: { url: string, user: User }) {
 
@@ -52,19 +56,22 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                             </Button>
                         </Link>
                     </div>
-
-
                 </div>
 
-
-
                 <div className="flex flex-wrap">
-
-
                     <div>
-
-                        TODO Seat display
-
+                        <div className="relative w-[500px] h-[500px]">
+                            {
+                                Array(10).fill(0).map((_, i) => {
+                                        return (
+                                            <div className={styles.circle} key={i}>
+                                                <Seat seatNum={i} selected={false}/>
+                                            </div>
+                                        )
+                                    }
+                                )
+                            }
+                        </div>
                     </div>
 
                     <div>
