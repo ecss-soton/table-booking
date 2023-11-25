@@ -47,7 +47,6 @@ export default function Tables({url, user, userTable}: { url: string, user: User
         }
     }>(`/api/v1/table/${user.tableId}/seats`, fetcher, {refreshInterval: 3000});
 
-    const [seatPos, setSeatPos] = useState(userTable.seatPositions);
     const [selectedUser, setSelectedUser] = useState(user.displayName);
     const [currentSeatPos, setCurrentSeatPos] = useState(0);
 
@@ -64,7 +63,9 @@ export default function Tables({url, user, userTable}: { url: string, user: User
     const updateSeat = async () => {
 
 
-        const newSeatPos = seatPos;
+        const newSeatPos = data?.table?.seatPositions;
+        if (!newSeatPos) return;
+
         if (newSeatPos.find((name) => name === selectedUser)) {
             newSeatPos[newSeatPos.findIndex((name) => name === selectedUser)] = "";
         }
@@ -117,7 +118,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
                     <div>
                         <div className="relative w-[500px] h-[500px]">
                             {
-                                seatPos.map((name, i) => {
+                                data?.table?.seatPositions?.map((name, i) => {
 
                                         if (i == currentSeatPos) {
                                             return (
