@@ -59,6 +59,11 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     tables = [];
   }
 
+  // filter out all tables that are locked and you are not in
+    tables = tables.filter((table) => {
+        return !table.locked || table.members.find((member) => member.id === user.id);
+    });
+
   const yourTable = user.tableId ?? undefined;
   let yourRank = tables.find((t) => t.id === yourTable)?.members.findIndex((elem) => elem.id === user.id);
 
