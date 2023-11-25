@@ -5,7 +5,7 @@ import {parse} from 'csv-parse'
 (async () => {
     let ticketHolders: {[key: string]: {name: string, sotonId: string, plusOneName?: string}} = {};
 
-    createReadStream("../doorlist.csv")
+    createReadStream("./doorlist.csv")
         .pipe(parse({ delimiter: ",", from_line: 2 }))
         .on("data", (row) => {
             const name = row[0];
