@@ -67,7 +67,7 @@ model TicketHolders {
 
   name String @db.VarChar(255)
   sotonId String @db.VarChar(50)
-  plusOneName String? @db.VarChar(255)
+  plusOnes String[]
 }
 
 model Table {

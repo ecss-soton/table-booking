@@ -38,16 +38,16 @@ export const authOptions: NextAuthOptions = {
     }
 };
 
-async function getPlusOne(sotonId: string): Promise<{ error?: string, plusOne?: string }> {
+async function getPlusOnes(sotonId: string): Promise<{ error?: string, plusOnes: string[] }> {
     const holder = await prisma.ticketHolders.findFirst({
         where: {
             sotonId: sotonId
         }
     })
 
-    if (!holder) return {error: 'Could not find ticket holder, have you bought a ticket?'};
+    if (!holder) return {error: 'Could not find ticket holder, have you bought a ticket?', plusOnes: []};
 
-    return {plusOne: holder.plusOneName ?? undefined}
+    return { plusOnes: holder.plusOnes }
 }
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
@@ -72,7 +72,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
             const data = sotonVerifyData.data;
 
-            const plusOne = await getPlusOne(data.sotonId)
+            const plusOne = await getPlusOnes(data.sotonId)
 
             if (plusOne.error) return res.status(403).json({error: plusOne.error})
 
@@ -82,7 +82,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 lastName: data.lastName,
                 displayName: `${data.firstName} ${data.lastName} (${data.sotonId})`,
                 sotonId: data.sotonId,
-                plusOnes: [plusOne.plusOne],
+                plusOnes: plusOne.plusOnes,
             }
         } catch {
             const data = await fetch(
@@ -96,7 +96,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
             const sotonData = await data.json();
 
-            const plusOne = await getPlusOne(sotonData.mail.split('@')[0])
+            const plusOne = await getPlusOnes(sotonData.mail.split('@')[0])
 
             if (plusOne.error) return res.status(403).json({error: plusOne.error})
 
@@ -106,7 +106,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 lastName: sotonData.surname,
                 displayName: sotonData.displayName,
                 sotonId: sotonData.mail.split('@')[0],
-                plusOnes: [plusOne.plusOne],
+                plusOnes: plusOne.plusOnes,
             }
 
 
