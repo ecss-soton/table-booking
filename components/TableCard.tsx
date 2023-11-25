@@ -127,15 +127,16 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
                         </Link>
                     </>
                 }
-                        <CopyButton value={`${table.url}/tables?join=${table.id}`}>
-                            {({ copied, copy }) => (
-                                <Tooltip label="Copied!" withArrow opened={copied}>
-                                    <ActionIcon variant={copied ? 'filled' : 'default'} radius="md" size={36} onClick={copy} color={copied ? 'teal' : 'dark'}>
-                                        <IconShare size={18} stroke={1.5}/>
-                                    </ActionIcon>
-                                </Tooltip>
-                            )}
-                        </CopyButton>
+                {table.locked && <CopyButton value={`${table.url}/tables?join=${table.id}`}>
+                    {({copied, copy}) => (
+                        <Tooltip label="Copied!" withArrow opened={copied}>
+                            <ActionIcon variant={copied ? 'filled' : 'default'} radius="md" size={36} onClick={copy}
+                                        color={copied ? 'teal' : 'dark'}>
+                                <IconShare size={18} stroke={1.5}/>
+                            </ActionIcon>
+                        </Tooltip>
+                    )}
+                </CopyButton>}
                 {
                     (table.userRank === 0) &&
                     <>
