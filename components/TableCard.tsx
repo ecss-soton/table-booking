@@ -1,4 +1,4 @@
-import {IconLock, IconLockOpen, IconShare} from '@tabler/icons';
+import {IconArrowForward, IconLock, IconLockOpen, IconShare} from '@tabler/icons';
 import {ActionIcon, Button, Card, CopyButton, Group, Table as MantineTable, Text, Tooltip, useMantineColorScheme} from '@mantine/core';
 import {useState} from 'react';
 import {useSWRConfig} from 'swr';
@@ -87,10 +87,10 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
     const rows = table.members.map(m => {
         // TODO sort this by seat position
         return (<tr key={m.name} style={(memberCount += 1) === table.userRank ? {backgroundColor: yourBgColour } : {}}>
-            <td>{m.name}{
+            <td className='flex flex-col'>{m.name}{
                 // @ts-ignore
                 m.plusOnes.map(name => {
-                return <div key={name}><FontAwesomeIcon icon={faArrowTurnUp} rotation={90} /> {name}</div>
+                return <div className='flex' key={name}><IconArrowForward/>{name}</div>
             })}</td>
 
         </tr>);
