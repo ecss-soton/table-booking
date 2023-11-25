@@ -30,7 +30,6 @@ import {User} from "@prisma/client";
 import axios from "axios";
 import styles from "../styles/circle.module.css";
 import {IconArmchair} from "@tabler/icons";
-import {TableSeatCard} from "@/components/TableSeatCard";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowTurnUp} from "@fortawesome/free-solid-svg-icons";
 
@@ -185,6 +184,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
 
                                 <NativeSelect
+                                    // @ts-ignore
                                     data={userTable.members.map(n => `${n.displayName}`)}
                                     label={`Select who should sit at seat ${currentSeatPos + 1}`}
                                     onChange={(event) => {

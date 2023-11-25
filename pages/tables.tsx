@@ -119,6 +119,7 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                 <div className="flex flex-wrap">
                     {data?.tables ? (data.tables.length == 0 ? null : data.tables.map(v => {
                         const userCount = 1 + user.plusOnes.length;
+                        // @ts-ignore
                         const realMemberCount = v.members.reduce((sum, m) => m.plusOnes.length + 1 + sum, 0);
                         if (v.id === data.yourTable) {
                             return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} userRank={data.yourRank} url={url} {...v} />);

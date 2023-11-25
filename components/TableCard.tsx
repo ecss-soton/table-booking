@@ -1,13 +1,13 @@
 import {IconLock, IconLockOpen, IconShare} from '@tabler/icons';
-import {ActionIcon, Button, Card, CopyButton, Group, Table, Text, Tooltip, useMantineColorScheme} from '@mantine/core';
+import {ActionIcon, Button, Card, CopyButton, Group, Table as MantineTable, Text, Tooltip, useMantineColorScheme} from '@mantine/core';
 import {useState} from 'react';
 import {useSWRConfig} from 'swr';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowTurnUp} from "@fortawesome/free-solid-svg-icons";
-import {User} from "@prisma/client";
+import {Table, User} from "@prisma/client";
 import Link from "next/link";
 
-export function TableCard(table: TableType & { userRank?: number, url: string, overfull: boolean }) {
+export function TableCard(table: Table & { userRank?: number, url: string, overfull: boolean }) {
 
     const { colorScheme } = useMantineColorScheme();
 
@@ -32,7 +32,7 @@ export function TableCard(table: TableType & { userRank?: number, url: string, o
             await mutate('/api/v1/tables', (oldData: any) => {
                 // Need to deep copy the data
                 let data: {
-                    yourTable?: string, yourRank?: number, tables: TableType[]
+                    yourTable?: string, yourRank?: number, tables: Table[]
                 } | undefined = JSON.parse(JSON.stringify(oldData));
                 if (data) {
                     let cachedTable = data.tables.find((t) => t.id === table.id);
@@ -83,11 +83,14 @@ export function TableCard(table: TableType & { userRank?: number, url: string, o
     const yourBgColour = colorScheme === 'dark' ? '#1e1e23' : '#e0e0e0'
 
     let memberCount = -1;
+    // @ts-ignore
     const rows = table.members.map(m => {
         // TODO sort this by seat position
         return (<tr key={m.name} style={(memberCount += 1) === table.userRank ? {backgroundColor: yourBgColour } : {}}>
-            <td>{m.name}{m.plusOnes.map(name => {
-                return <div><FontAwesomeIcon icon={faArrowTurnUp} rotation={90} /> {name}</div>
+            <td>{m.name}{
+                // @ts-ignore
+                m.plusOnes.map(name => {
+                return <div key={name}><FontAwesomeIcon icon={faArrowTurnUp} rotation={90} /> {name}</div>
             })}</td>
 
         </tr>);
@@ -100,9 +103,9 @@ export function TableCard(table: TableType & { userRank?: number, url: string, o
                 <Text size="lg" weight={500}>
                     Table
                 </Text>
-                <Table>
+                <MantineTable>
                     <tbody>{rows}</tbody>
-                </Table>
+                </MantineTable>
             </Card.Section>
 
             <Group>
