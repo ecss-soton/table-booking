@@ -127,7 +127,7 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
                         </Link>
                     </>
                 }
-                {table.locked && <CopyButton value={`${table.url}/tables?join=${table.id}`}>
+                {(table.userRank !== undefined) && <CopyButton value={`${table.url}/tables?join=${table.id}`}>
                     {({copied, copy}) => (
                         <Tooltip label="Copied!" withArrow opened={copied}>
                             <ActionIcon variant={copied ? 'filled' : 'default'} radius="md" size={36} onClick={copy}
