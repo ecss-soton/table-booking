@@ -25,11 +25,11 @@ export default function Home({ session, user, url, table }: { session: Session, 
                     {dark ? <img
                         className='max-h-72'
                         src="./WinterBallGF_1.png"
-                        alt="Aleios ECSS hackathon logo"
+                        alt="ECSS winter ball logo"
                     /> : <img
                         className='max-h-72'
                         src="./WinterBallGF_1.png"
-                        alt="Aleios ECSS hackathon logo"
+                        alt="ECSS winter ball logo"
                     />}
 
                 </div>
