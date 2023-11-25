@@ -26,7 +26,6 @@ export default function Tables({ url, user }: { url: string, user: User }) {
     }>('/api/v1/tables', fetcher, {refreshInterval: 3000});
 
     const [buttonLoading, setButtonLoading] = useState(false);
-    const [showJoinable, setShowJoinable] = useState(true);
     const [createTableError, setCreateTableError] = useState(false);
 
     const createNewTable = async () => {
@@ -77,7 +76,7 @@ export default function Tables({ url, user }: { url: string, user: User }) {
 
     return (
         <>
-            <div className='flex flex-col items-center justify-center w-full flex-1 px-20 text-center'>
+            <div className='flex flex-col items-center justify-center w-full flex-1 px-5 text-center'>
                 <h1 className="font-bold text-2xl m-2">View tables</h1>
                 <div className="flex flex-wrap flex-col">
                     <Modal
@@ -113,8 +112,6 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                         </Link>
                     </div>
 
-
-                    <Checkbox className='m-5' checked={showJoinable} label="Only show tables you can join" onChange={(event) => setShowJoinable(event.currentTarget.checked)} />
                 </div>
                 <div className="flex flex-wrap">
                     {data?.tables ? (data.tables.length == 0 ? null : data.tables.map(v => {
@@ -124,8 +121,8 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                         if (v.id === data.yourTable) {
                             return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} userRank={data.yourRank} url={url} {...v} />);
                         }
-                        if (showJoinable && (v.locked || realMemberCount > (10 - userCount))) {
-                            return null;
+                        if (v.locked || realMemberCount > (10 - userCount)) {
+                            return <></>;
                         }
                         return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} url={url} {...v}/>);
                     })) : <div/>}
