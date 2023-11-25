@@ -1,0 +1,76 @@
+.circle {
+    --circle-translation: 150px;
+
+    position: absolute;
+    left: calc(50% - 25px);
+    top: calc(50% - 25px);
+    height: 50px;
+    width: 50px;
+}
+
+.circle:nth-child(1) {
+    transform: translateX(var(--circle-translation));
+}
+
+.circle:nth-child(2) {
+    transform: rotate(36deg) translateX(var(--circle-translation));
+}
+.circle:nth-child(2) div {
+    transform: rotate(-36deg)
+}
+
+.circle:nth-child(3) {
+    transform: rotate(72deg) translateX(var(--circle-translation));
+}
+.circle:nth-child(3) div {
+    transform: rotate(-72deg)
+}
+
+.circle:nth-child(4) {
+    transform: rotate(108deg) translateX(var(--circle-translation));
+}
+.circle:nth-child(4) div {
+    transform: rotate(-108deg)
+}
+
+.circle:nth-child(5) {
+    transform: rotate(144deg) translateX(var(--circle-translation));
+}
+.circle:nth-child(5) div {
+    transform: rotate(-144deg)
+}
+
+.circle:nth-child(6) {
+    transform: rotate(180deg) translateX(var(--circle-translation));
+}
+.circle:nth-child(6) div {
+    transform: rotate(180deg)
+}
+
+.circle:nth-child(7) {
+    transform: rotate(216deg) translateX(var(--circle-translation));
+}
+.circle:nth-child(7) div {
+    transform: rotate(-216deg)
+}
+
+.circle:nth-child(8) {
+    transform: rotate(252deg) translateX(var(--circle-translation));
+}
+.circle:nth-child(8) div {
+    transform: rotate(-252deg)
+}
+
+.circle:nth-child(9) {
+    transform: rotate(288deg) translateX(var(--circle-translation));
+}
+.circle:nth-child(9) div {
+    transform: rotate(-288deg)
+}
+
+.circle:nth-child(10) {
+    transform: rotate(324deg) translateX(var(--circle-translation));
+}
+.circle:nth-child(10) div {
+    transform: rotate(-324deg)
+}

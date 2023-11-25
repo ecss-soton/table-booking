@@ -5,7 +5,7 @@ import {authOptions} from '../auth/[...nextauth]';
 import { nanoid } from 'nanoid'
 
 // interface RequestData {
-//   team?: string
+//   table?: string
 // }
 
 interface ResponseError {
@@ -32,44 +32,56 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         }
     });
 
-    if (!user || !user.registered) {
+    if (!user) {
         return res.status(404).json({
-            error: true, message: 'This user does not exist or is not registered.',
+            error: true, message: 'This user does not exist.',
         });
     }
 
-    if (req.body.team) {
-        // user wants to join a specific team.
-        if (typeof req.body.team !== "string") return res.status(405).json({
-            error: true, message: 'team parameter must be a string id.',
+    if (req.body.table) {
+        // user wants to join a specific table.
+        if (typeof req.body.table !== "string") return res.status(405).json({
+            error: true, message: 'table parameter must be a string id.',
         });
 
-        const team = await prisma.team.findFirst({
+        if (user.tableId == req.body.table) return res.status(405).json({
+            error: true, message: 'already in table.',
+        });
+
+        const table = await prisma.table.findFirst({
             where: {
-                id: req.body.team
+                id: req.body.table
             }, include: {
                 members: true
             }
         });
 
-        if (!team) return res.status(405).json({
-            error: true, message: 'team parameter must be between 0 and number of teams.',
-        });
+        if (!table) {
+            return res.status(405).json({
+                error: true, message: 'table parameter must be between 0 and number of tables.',
+            });
+        }
 
-        if (team.members.length >= 4 || (!req.body.fromCode && team.locked)) return res.status(405).json({
-            error: true, message: 'team is already filled or locked.',
-        });
+        const userCount = 1 + user.plusOnes.length;
+        const realMemberCount = table.members.reduce((sum, m) => m.plusOnes.length + 1 + sum, 0);
 
-        const user = await prisma.user.update({
+        if (realMemberCount > (10 - userCount)  || (!req.body.fromCode && table.locked)) {
+            return res.status(405).json({
+                error: true, message: 'table is already filled or locked.',
+            });
+        }
+
+
+        const updatedUser = await prisma.user.update({
             where: {
                 id: attemptedAuth.id,
             }, data: {
-                teamId: team.id, joinedTeamTime: new Date()
+                tableId: table.id, joinedTableTime: new Date()
             }
         });
 
-        if (!user) return res.status(405).json({
-            error: true, message: 'team does not exist.',
+        if (!updatedUser) return res.status(405).json({
+            error: true, message: 'table does not exist.',
         });
 
     } else {
@@ -78,8 +90,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 id: attemptedAuth.id,
             },
             data: {
-                joinedTeamTime: new Date(),
-                team: {
+                joinedTableTime: new Date(),
+                table: {
                     create: {
                         id: nanoid(8)
                     }
@@ -88,11 +100,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         });
 
         if (!user) return res.status(405).json({
-            error: true, message: 'could not create team.',
+            error: true, message: 'could not create table.',
         });
     }
 
-    await prisma.team.deleteMany({
+    await prisma.table.deleteMany({
         where: {
             members: {
                 none: {}

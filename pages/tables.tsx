@@ -1,7 +1,7 @@
-import {TeamCard} from '@/components/TeamCard';
+import {TableCard} from '@/components/TableCard';
 import {Button, Card, Checkbox,TextInput, Notification, Modal} from '@mantine/core';
 import {EventHandler, KeyboardEvent, KeyboardEventHandler, useRef, useState} from 'react';
-import {SubmissionForm, Team} from '@/types/types';
+import {Table} from '@prisma/client';
 import useSWR from 'swr';
 import fetcher from '../middleware/fetch';
 import Link from "next/link";
@@ -17,19 +17,19 @@ import prisma from "../prisma/client";
 import {User} from "@prisma/client";
 import axios from "axios";
 
-export default function Teams({ url, user }: { url: string, user: User }) {
+export default function Tables({ url, user }: { url: string, user: User }) {
 
 
 
     const {data, mutate} = useSWR<{
-        yourTeam?: string, yourRank?: number, teams: Team[]
-    }>('/api/v1/teams', fetcher, {refreshInterval: 3000});
+        yourTable?: string, yourRank?: number, tables: Table[]
+    }>('/api/v1/tables', fetcher, {refreshInterval: 3000});
 
     const [buttonLoading, setButtonLoading] = useState(false);
-    const [showJoinable, setShowJoinable] = useState(false);
-    const [createTeamError, setCreateTeamError] = useState(false);
+    const [showJoinable, setShowJoinable] = useState(true);
+    const [createTableError, setCreateTableError] = useState(false);
 
-    const createNewTeam = async () => {
+    const createNewTable = async () => {
         setButtonLoading(true);
 
         const res = await fetch('/api/v1/join', {
@@ -45,8 +45,8 @@ export default function Teams({ url, user }: { url: string, user: User }) {
             await mutate();
             setButtonLoading(false);
         } else {
-            setCreateTeamError(true);
-            setTimeout(() => setCreateTeamError(false), 5_000);
+            setCreateTableError(true);
+            setTimeout(() => setCreateTableError(false), 5_000);
         }
     };
 
@@ -55,14 +55,14 @@ export default function Teams({ url, user }: { url: string, user: User }) {
 
     const [joinedFromCode, setjoinedFromCode] = useState(false);
 
-    const joinTeam = async () => {
+    const joinTable = async () => {
 
         const res = await fetch('/api/v1/join', {
             method: 'post', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
 
-            body: JSON.stringify({team: join, fromCode:true})
+            body: JSON.stringify({table: join, fromCode:true})
         });
 
         if (res.ok) {
@@ -71,31 +71,31 @@ export default function Teams({ url, user }: { url: string, user: User }) {
         }
     };
 
-    if (data?.teams && data.teams.length != 0) {
-        data.teams.sort(t => t.id === data.yourTeam ? -1 : 1)
+    if (data?.tables && data.tables.length != 0) {
+        data.tables.sort(t => t.id === data.yourTable ? -1 : 1)
     }
 
     return (
         <>
             <div className='flex flex-col items-center justify-center w-full flex-1 px-20 text-center'>
-                <h1 className="font-bold text-2xl m-2">View teams</h1>
+                <h1 className="font-bold text-2xl m-2">View tables</h1>
                 <div className="flex flex-wrap flex-col">
                     <Modal
                         opened={joinedFromCode || !!join}
                         onClose={() => {
                             setjoinedFromCode(false)
-                            router.push("/teams")
+                            router.push("/tables")
                         }}
                         withCloseButton={false}
-                        title="Join this team?"
+                        title="Join this table?"
                     >
                         <div>
-                            <Link href="/teams" passHref>
-                                <Button color="green" variant='filled' className='' component="a" onClick={joinTeam}>
+                            <Link href="/tables" passHref>
+                                <Button color="green" variant='filled' className='' component="a" onClick={joinTable}>
                                     Accept
                                 </Button>
                             </Link>
-                            <Link href="/teams" passHref>
+                            <Link href="/tables" passHref>
                                 <Button variant="outline" color="red" className='mx-5' component="a" onClick={() => setjoinedFromCode(false)}>
                                     Reject
                                 </Button>
@@ -103,8 +103,8 @@ export default function Teams({ url, user }: { url: string, user: User }) {
                         </div>
                     </Modal>
                     <div className='flex flex-wrap flex-row items-end'>
-                        <Button className="mx-5" color={!createTeamError ? 'default' : 'red'} disabled={!data?.teams || !user.registered} loading={buttonLoading} onClick={createNewTeam}>
-                            Create new team
+                        <Button className="mx-5" color={!createTableError ? 'default' : 'red'} disabled={!data?.tables} loading={buttonLoading} onClick={createNewTable}>
+                            Create new table
                         </Button>
                         <Link href="/" passHref>
                             <Button variant='outline' className='mx-5' component="a">
@@ -114,20 +114,19 @@ export default function Teams({ url, user }: { url: string, user: User }) {
                     </div>
 
 
-                    <Checkbox className='m-5' checked={showJoinable} label="Only show teams you can join" onChange={(event) => setShowJoinable(event.currentTarget.checked)} />
+                    <Checkbox className='m-5' checked={showJoinable} label="Only show tables you can join" onChange={(event) => setShowJoinable(event.currentTarget.checked)} />
                 </div>
-                {
-                    !user.registered ? <h3 style={{color:"red"}}>You can only join a team if you have registered.</h3>: <div/>
-                }
                 <div className="flex flex-wrap">
-                    {data?.teams ? (data.teams.length == 0 ? null : data.teams.map(v => {
-                        if (v.id === data.yourTeam) {
-                            return (<TeamCard key={v.id} userRank={data.yourRank} url={url} registered={user.registered} {...v} />);
+                    {data?.tables ? (data.tables.length == 0 ? null : data.tables.map(v => {
+                        const userCount = 1 + user.plusOnes.length;
+                        const realMemberCount = v.members.reduce((sum, m) => m.plusOnes.length + 1 + sum, 0);
+                        if (v.id === data.yourTable) {
+                            return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} userRank={data.yourRank} url={url} {...v} />);
                         }
-                        if (showJoinable && (v.locked || v.members.length >= 4)) {
+                        if (showJoinable && (v.locked || realMemberCount > (10 - userCount))) {
                             return null;
                         }
-                        return (<TeamCard key={v.id} url={url} registered={user.registered} {...v}/>);
+                        return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} url={url} {...v}/>);
                     })) : <div/>}
 
                 </div>
@@ -163,4 +162,4 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
     }
 }
 
-Teams.auth = true;
+Tables.auth = true;

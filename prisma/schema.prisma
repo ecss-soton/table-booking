@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// The discord or microsoft account
+// The microsoft account
 model Account {
   id                String  @id @default(cuid()) @db.VarChar(30)
   userId            String  @db.VarChar(30)
@@ -44,27 +44,15 @@ model User {
   lastName    String  @db.VarChar(255)
   displayName String  @db.VarChar(255)
   sotonId     String  @unique @db.VarChar(50) // ec3g21
-  discordId   String? @unique @db.VarChar(20)
-  discordTag  String? @unique @db.VarChar(37) // 32 chars + 5
 
-  registered   Boolean @default(false)
-  tags         Tag[]
-  yearOfStudy  Int?
-  dietaryReq   String?
-  extra        String?
-  photoConsent Boolean?
-
-  checkedIn   Boolean @default(false)
-
-  team           Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId         String?   @db.VarChar(30)
-  joinedTeamTime DateTime?
-
-  cv Bytes?
-  cvFileName String?
+  table           Table?     @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  tableId         String?   @db.VarChar(30)
+  joinedTableTime DateTime?
 
   accounts Account[]
   sessions Session[]
+
+  plusOnes String[]
 
   // BUG Next Auth being strange might have to add these columns if you get errors about something not existing
   name          String?   @db.VarChar(255)
@@ -73,32 +61,21 @@ model User {
   image         String?   @db.VarChar(255)
 }
 
-enum Tag {
-  rs
-  java
-  cpp
-  js
-  ts
-  kt
-  cs
-  rb
-  sql
-  py
-  c
-  go
-  dart
-  swift
-  hs
+// Pureley for importing the csv file of ticketed users to restrict logins
+model TicketHolders {
+  id String @id @default(cuid()) @db.VarChar(30)
+
+  name String @db.VarChar(255)
+  sotonId String @db.VarChar(50)
+  plusOnes String[]
 }
 
-model Team {
+model Table {
   id String @id @db.VarChar(16)
+
+  seatPositions String[] @default(["","","","","","","", "","",""])
 
   members User[]
   locked  Boolean @default(true)
-
-  name String?
-  githubLink String?
-  submissionTime DateTime?
-  timeslot String? @unique
 }
+

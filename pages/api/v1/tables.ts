@@ -1,13 +1,18 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../prisma/client';
-import { Team } from '@/types/types';
+
 import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
+import {Table} from "@prisma/client";
 
 interface ResponseData {
-  yourTeam?: string,
+  yourTable?: string,
   yourRank?: number,
-  teams: Team[]
+  tables: {
+    locked: boolean,
+    id: string,
+    members: { name: string, plusOnes: string[] }[]
+  }[]
 }
 
 interface ResponseError {
@@ -40,32 +45,30 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     });
   }
 
-  let teams = await prisma.team.findMany({
+  let tables = await prisma.table.findMany({
     include: {
       members: {
         orderBy: {
-          joinedTeamTime: 'asc'
+          joinedTableTime: 'asc'
         }
       }
     }
   });
 
-  if (!teams) {
-    teams = [];
+  if (!tables) {
+    tables = [];
   }
 
-  const yourTeam = user.teamId ?? undefined;
-  let yourRank = teams.find((t) => t.id === yourTeam)?.members.findIndex((elem) => elem.id === user.id);
+  const yourTable = user.tableId ?? undefined;
+  let yourRank = tables.find((t) => t.id === yourTable)?.members.findIndex((elem) => elem.id === user.id);
 
   res.status(200).json({
-    yourTeam, yourRank, teams: teams.map((team) => {
+    yourTable: yourTable, yourRank, tables: tables.map((table) => {
       return {
-        locked: team.locked, id: team.id, members: team.members.map((member) => {
+        locked: table.locked, id: table.id, members: table.members.map((member) => {
           return {
             name: member.displayName ?? '',
-            discordTag: member.discordTag ?? undefined,
-            tags: member.tags,
-            yearOfStudy: member.yearOfStudy ?? undefined
+            plusOnes: member.plusOnes ?? [],
           };
         })
       };

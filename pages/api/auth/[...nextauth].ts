@@ -29,9 +29,6 @@ export const authOptions: NextAuthOptions = {
             // Send properties to the client, like an access_token from a provider.
             session.firstName = user.firstName;
             session.lastName = user.lastName;
-            session.discord = {
-                tag: user.discordTag,
-            };
             session.microsoft = {
                 email: user.sotonId + '@soton.ac.uk',
             };
@@ -40,6 +37,18 @@ export const authOptions: NextAuthOptions = {
         }
     }
 };
+
+async function getPlusOnes(sotonId: string): Promise<{ error?: string, plusOnes: string[] }> {
+    const holder = await prisma.ticketHolders.findFirst({
+        where: {
+            sotonId: sotonId
+        }
+    })
+
+    if (!holder) return {error: 'Could not find ticket holder, have you bought a ticket?', plusOnes: []};
+
+    return { plusOnes: holder.plusOnes }
+}
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
     // @ts-ignore
@@ -50,7 +59,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
         let sotonVerifyData;
 
         try {
-            console.log('Lol2')
             sotonVerifyData = await axios({
                 method: 'GET',
                 url: `https://sotonverify.link/api/v2/user?sotonId=${profile.email.split('@')[0]}`,
@@ -62,9 +70,11 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 }
             })
 
-            console.log('Lol4')
-
             const data = sotonVerifyData.data;
+
+            const plusOne = await getPlusOnes(data.sotonId)
+
+            if (plusOne.error) return res.status(403).json({error: plusOne.error})
 
             return {
                 id: data.sotonId,
@@ -72,12 +82,9 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 lastName: data.lastName,
                 displayName: `${data.firstName} ${data.lastName} (${data.sotonId})`,
                 sotonId: data.sotonId,
-                discordId: data.discordId,
-                discordTag: data.discordTag,
+                plusOnes: plusOne.plusOnes,
             }
         } catch {
-            console.log('Lol')
-
             const data = await fetch(
                 `https://graph.microsoft.com/v1.0/me/`,
                 {
@@ -89,16 +96,17 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
             const sotonData = await data.json();
 
+            const plusOne = await getPlusOnes(sotonData.mail.split('@')[0])
+
+            if (plusOne.error) return res.status(403).json({error: plusOne.error})
+
             return {
                 id: sotonData.mail.split('@')[0],
                 firstName: sotonData.givenName,
                 lastName: sotonData.surname,
                 displayName: sotonData.displayName,
                 sotonId: sotonData.mail.split('@')[0],
-
-                discordId: null,
-                discordTag: null,
-
+                plusOnes: plusOne.plusOnes,
             }
 
 
