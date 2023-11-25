@@ -8,7 +8,11 @@ import {Table} from "@prisma/client";
 interface ResponseData {
   yourTable?: string,
   yourRank?: number,
-  tables: Table[]
+  tables: {
+    locked: boolean,
+    id: string,
+    members: { name: string, plusOnes: string[] }[]
+  }[]
 }
 
 interface ResponseError {

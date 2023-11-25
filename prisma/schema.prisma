@@ -53,7 +53,6 @@ model User {
   sessions Session[]
 
   plusOnes String[]
-  seatPos Int?
 
   // BUG Next Auth being strange might have to add these columns if you get errors about something not existing
   name          String?   @db.VarChar(255)
@@ -74,6 +73,9 @@ model TicketHolders {
 model Table {
   id String @id @db.VarChar(16)
 
+  seatPositions String[] @default(["","","","","","","", "","",""])
+
   members User[]
   locked  Boolean @default(true)
 }
+
