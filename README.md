@@ -1,13 +1,8 @@
 # Table booking
 
-A service to create and join tables for sit down meals
+A service to create, join and choose seats for tables for formal sit down meals with a seating plan.
 
-TODO
-- Add more info to teams page
-- Display an error message if you try and join a table that doesn't exist
-- Have follow through links so you can click a link to join a table and register at the same time
-- Allow profile editing
-- Allow team leaders to kick team members
+![Image showing the seat booking process](example.png "Seat booking process")
 
 ## Run Locally
 
