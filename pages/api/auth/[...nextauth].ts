@@ -34,20 +34,27 @@ export const authOptions: NextAuthOptions = {
             };
             session.id = user.id;
             return session
+        },
+        async signIn({ user, account, profile, email, credentials }) {
+            const holder = await prisma.ticketHolders.findFirst({
+                where: {
+                    sotonId: user.sotonId || undefined,
+                }
+            })
+
+            return !!holder;
         }
     }
 };
 
-async function getPlusOnes(sotonId: string): Promise<{ error?: string, plusOnes: string[] }> {
+async function getPlusOnes(sotonId: string): Promise<{ plusOnes: string[] }> {
     const holder = await prisma.ticketHolders.findFirst({
         where: {
             sotonId: sotonId
         }
     })
 
-    if (!holder) return {error: 'Could not find ticket holder, have you bought a ticket?', plusOnes: []};
-
-    return { plusOnes: holder.plusOnes }
+    return { plusOnes: holder?.plusOnes || [] }
 }
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
@@ -74,8 +81,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
             const plusOne = await getPlusOnes(data.sotonId)
 
-            if (plusOne.error) return res.status(403).json({error: plusOne.error})
-
             return {
                 id: data.sotonId,
                 firstName: data.firstName,
@@ -98,8 +103,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
             const plusOne = await getPlusOnes(sotonData.mail.split('@')[0])
 
-            if (plusOne.error) return res.status(403).json({error: plusOne.error})
-
             return {
                 id: sotonData.mail.split('@')[0],
                 firstName: sotonData.givenName,
@@ -108,10 +111,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 sotonId: sotonData.mail.split('@')[0],
                 plusOnes: plusOne.plusOnes,
             }
-
-
-
-            // res.redirect(`https://sotonverify.link?callback=${process.env.NEXTAUTH_URL}`);
 
         }
 
