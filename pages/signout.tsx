@@ -5,11 +5,15 @@ import {NextApiRequestCookies} from "next/dist/server/api-utils";
 import {NextApiRequest, NextApiResponse} from "next";
 import {authOptions} from "./api/auth/[...nextauth]";
 import {Text, useMantineColorScheme} from "@mantine/core";
-import {useSession} from "next-auth/react";
+import {signIn, signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/router";
+import Tables from "./seat-selection";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faMicrosoft} from "@fortawesome/free-brands-svg-icons";
+import React from "react";
 
 // @ts-ignore
-export default function SignIn() {
+export default function SignOut() {
 
     const router = useRouter();
 
@@ -36,13 +40,13 @@ export default function SignIn() {
 
                 </div>
 
-                <h1 className="font-bold text-4xl mt-10">ECSS Winter Ball table selection</h1>
-
-                <Text className='my-5'>
-                    Login with your university account to select a table so you can sit with your friends!
-                </Text>
-
-                <LoginButton/>
+                <div onClick={() => signOut()}
+                     className="cursor-pointer h-11 w-64 text-white max-w-300 bg-[#005C85] hover:bg-[#024460] rounded-md flex p-3 flex-row items-center justify-center m-2">
+                    <div className='flex-none pr-2'>
+                        <FontAwesomeIcon icon={faMicrosoft} className='text-white text-lg h-4 w-5'/>
+                    </div>
+                    Sign out
+                </div>
 
             </main>
         </div>
@@ -53,10 +57,10 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
 
     const session = await unstable_getServerSession(context.req, context.res, authOptions)
 
-    if (session) {
+    if (!session) {
         return {
             redirect: {
-                destination: '/',
+                destination: '/signin',
                 permanent: false,
             },
         }
@@ -64,3 +68,5 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
 
     return {props: {}}
 }
+
+SignOut.auth = true;
