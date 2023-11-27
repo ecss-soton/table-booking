@@ -28,7 +28,6 @@ export default function Qr() {
         })
 
         const res2 = await res.json()
-        console.log(res2)
         if (res2.success) {
             setData(res2);
         } else {
