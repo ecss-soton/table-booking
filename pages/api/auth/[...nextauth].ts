@@ -10,7 +10,7 @@ export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
     pages: {
         signIn: '/signin',
-        signOut: '/',
+        signOut: '/signout'
     },
     providers: [
         AzureADProvider({
