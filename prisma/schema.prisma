@@ -73,7 +73,7 @@ model TicketHolders {
 model Table {
   id String @id @db.VarChar(16)
 
-  seatPositions String[] @default(["","","","","","","", "","",""])
+  seatPositions String[] @default(["","","","","","",""])
 
   members User[]
   locked  Boolean @default(true)

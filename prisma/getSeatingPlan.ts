@@ -39,7 +39,7 @@ import {writeFileSync} from "fs";
     writeFileSync('./seatingPlan.json', JSON.stringify(allTables, null, 4))
 
     // Write the allTables object to a CSV file
-    let csv = "Name of Guest,Table number\n"
+    let csv = "Name of Guest,Alley number\n"
     allTables.forEach((table, tableNo) => csv += table.map((elem) => `${elem},${tableNo+1}`).join('\n') + '\n')
     writeFileSync('./seatingPlan.csv', csv)
 

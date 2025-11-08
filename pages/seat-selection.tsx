@@ -131,7 +131,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
                 <div className="flex flex-wrap">
                     <div>
-                        <div className="relative w-[500px] h-[500px]">
+                        <div className="flex flex-col gap-2 justify-center items-center pt-10 pr-20">
                             {
                                 data?.table?.seatPositions?.map((name, i) => {
 
@@ -175,7 +175,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
                     <div>
 
-                        <h2 className='font-bold text-xl m-2'>Your table</h2>
+                        <h2 className='font-bold text-xl m-2'>Your alley</h2>
 
                         {/*<TableSeatCard key={userTable.id} overfull={realMemberCount > (10 - userCount)} userRank={data?.yourRank} url={url} {...userTable} />*/}
 
@@ -183,7 +183,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
                             <Card.Section className="p-4" mt="md">
                                 <Text size="lg" weight={500}>
-                                    Table
+                                    Alley
                                 </Text>
                                 <MantineTable>
                                     <thead>

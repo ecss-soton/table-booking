@@ -19,14 +19,15 @@ import axios from "axios";
 
 export default function Tables({ url, user }: { url: string, user: User }) {
 
-
-
     const {data, mutate} = useSWR<{
         yourTable?: string, yourRank?: number, tables: Table[]
     }>('/api/v1/tables', fetcher, {refreshInterval: 3000});
 
     const [buttonLoading, setButtonLoading] = useState(false);
     const [createTableError, setCreateTableError] = useState(false);
+    const [nameInput, setNameInput] = useState(user.displayName);
+    const [updateNameLoading, setUpdateNameLoading] = useState(false);
+    const [updateNameError, setUpdateNameError] = useState(false);
 
     const createNewTable = async () => {
         setButtonLoading(true);
@@ -70,6 +71,34 @@ export default function Tables({ url, user }: { url: string, user: User }) {
         }
     };
 
+    const updateFirstName = async () => {
+        if (!nameInput.trim()) {
+            setUpdateNameError(true);
+            setTimeout(() => setUpdateNameError(false), 5_000);
+            return;
+        }
+
+        setUpdateNameLoading(true);
+
+        const res = await fetch('/api/v1/user/update-name', {
+            method: 'PATCH',
+            headers: {
+                'Accept': 'application/json', 'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: nameInput })
+        });
+
+        if (res.ok) {
+            setUpdateNameLoading(false);
+            // Update the user object in the page
+            user.firstName = nameInput;
+        } else {
+            setUpdateNameError(true);
+            setTimeout(() => setUpdateNameError(false), 5_000);
+            setUpdateNameLoading(false);
+        }
+    };
+
     if (data?.tables && data.tables.length != 0) {
         data.tables.sort(t => t.id === data.yourTable ? -1 : 1)
     }
@@ -77,8 +106,28 @@ export default function Tables({ url, user }: { url: string, user: User }) {
     return (
         <>
             <div className='flex flex-col items-center justify-center w-full flex-1 px-5 text-center'>
-                <h1 className="font-bold text-2xl m-2">View tables</h1>
+                <h1 className="font-bold text-2xl m-2">View alleys</h1>
                 <div className="flex flex-wrap flex-col">
+                    <Card className="m-5" withBorder radius="md" p="md">
+                        <Card.Section className="p-4" mt="md">
+                            <h3 className="font-bold text-lg mb-3">Update your name</h3>
+                            <div className="flex flex-row gap-3 items-end justify-center">
+                                <TextInput
+                                    placeholder="Name"
+                                    value={nameInput}
+                                    onChange={(e) => setNameInput(e.currentTarget.value)}
+                                    style={{ flex: 1, maxWidth: '300px' }}
+                                />
+                                <Button
+                                    onClick={updateFirstName}
+                                    loading={updateNameLoading}
+                                    color={updateNameError ? 'red' : 'blue'}
+                                >
+                                    Update Name
+                                </Button>
+                            </div>
+                        </Card.Section>
+                    </Card>
                     <Modal
                         opened={joinedFromCode || !!join}
                         onClose={() => {
@@ -86,7 +135,7 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                             router.push("/tables")
                         }}
                         withCloseButton={false}
-                        title="Join this table?"
+                        title="Join this alley?"
                     >
                         <div>
                             <Link href="/tables" passHref>
@@ -103,7 +152,7 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                     </Modal>
                     <div className='flex flex-wrap flex-row items-end'>
                         <Button className="mx-5" color={!createTableError ? 'default' : 'red'} disabled={!data?.tables} loading={buttonLoading} onClick={createNewTable}>
-                            Create new table
+                            Create new alley
                         </Button>
                         <Link href="/" passHref>
                             <Button variant='outline' className='mx-5' component="a">
@@ -114,18 +163,18 @@ export default function Tables({ url, user }: { url: string, user: User }) {
 
                 </div>
                 <div className="flex flex-wrap">
-                    {data?.tables ? (data.tables.length == 0 ? <p>There are not currently any tables you can join</p> : data.tables.map(v => {
+                    {data?.tables ? (data.tables.length == 0 ? <p>There are not currently any alleys you can join</p> : data.tables.map(v => {
                         const userCount = 1 + user.plusOnes.length;
                         // @ts-ignore
                         const realMemberCount = v.members.reduce((sum, m) => m.plusOnes.length + 1 + sum, 0);
                         if (v.id === data.yourTable) {
-                            return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} userRank={data.yourRank} url={url} {...v} />);
+                            return (<TableCard key={v.id} overfull={realMemberCount > (7 - userCount)} userRank={data.yourRank} url={url} {...v} />);
                         }
-                        if (v.locked || realMemberCount > (10 - userCount)) {
+                        if (v.locked || realMemberCount > (7 - userCount)) {
                             return <></>;
                         }
-                        return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} url={url} {...v}/>);
-                    })) : <p>There are not currently any tables you can join</p>}
+                        return (<TableCard key={v.id} overfull={realMemberCount > (7 - userCount)} url={url} {...v}/>);
+                    })) : <p>There are not currently any alleys you can join</p>}
 
                 </div>
             </div>

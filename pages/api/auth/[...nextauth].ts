@@ -43,6 +43,7 @@ export const authOptions: NextAuthOptions = {
             })
 
             return !!holder;
+            // return true
         }
     }
 };

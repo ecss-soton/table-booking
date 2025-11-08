@@ -23,7 +23,9 @@ export default function SignIn() {
 
             <main className="flex flex-col items-center justify-center w-full flex-1 px-5 text-center">
 
-                <div className='flex flex-row justify-center'>
+                <h1 className="font-bold text-4xl mb-8">ECSS Bowling Booking</h1>
+
+                {/* <div className='flex flex-row justify-center'>
                     {dark ? <img
                         className='max-h-72'
                         src="./WinterBallGF_1.png"
@@ -34,7 +36,7 @@ export default function SignIn() {
                         alt="ECSS Winter ball logo"
                     />}
 
-                </div>
+                </div> */}
 
                 <h1 className="font-bold text-4xl mt-10">ECSS Winter Ball table selection</h1>
 

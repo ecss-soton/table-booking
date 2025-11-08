@@ -111,13 +111,13 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
             <Group>
                 <Button radius="md" disabled={table.locked || table.userRank !== undefined || table.overfull}
                         loading={joinButtonLoading} onClick={joinTable}>
-                    Join Table
+                    Join Alley
                 </Button>
                 {
                     (table.userRank !== undefined) &&
                     <>
                         <Button radius="md" loading={leaveButtonLoading} onClick={leaveTable}>
-                            Leave Table
+                            Leave Alley
                         </Button>
 
                         <Link href="/seat-selection" passHref>

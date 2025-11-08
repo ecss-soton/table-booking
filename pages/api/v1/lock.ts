@@ -56,7 +56,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
   }
 
   if (!user || !table) return res.status(404).json({
-    error: true, message: 'Could not find user or user not in a table.',
+    error: true, message: 'Could not find user or user not in an alley.',
   });
 
   if (table.members[0].id !== user.id) return res.status(405).json({
@@ -64,7 +64,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
   });
 
   if (table.locked === req.body.shouldLock) return res.status(405).json({
-    error: true, message: 'The table is already locked/unlocked.',
+    error: true, message: 'The alley is already locked/unlocked.',
   });
 
   const updateTable = await prisma.table.update({
@@ -79,7 +79,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
 
   if (!updateTable) {
     return res.status(500).json({
-      error: true, message: 'Unable to update table',
+      error: true, message: 'Unable to update alley',
     });
   }
 
