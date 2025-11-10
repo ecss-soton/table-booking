@@ -21,7 +21,9 @@ export default function Home({ session, user, url, table }: { session: Session, 
 
             <main className="flex flex-col items-center justify-center w-screen flex-1 p-8 text-center">
 
-                <div className='flex flex-row justify-center'>
+                <h1 className="font-bold text-4xl mb-8">ECSS Bowling Booking</h1>
+
+                {/* <div className='flex flex-row justify-center'>
                     {dark ? <img
                         className='max-h-72'
                         src="./WinterBallGF_1.png"
@@ -32,7 +34,7 @@ export default function Home({ session, user, url, table }: { session: Session, 
                         alt="ECSS winter ball logo"
                     />}
 
-                </div>
+                </div> */}
 
 
                 <div className="mt-12">
@@ -71,7 +73,7 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
     if (!session?.microsoft.email) {
         return {
             redirect: {
-                destination: '/signin',
+                destination: '/booking/signin',
                 permanent: false,
             },
         }

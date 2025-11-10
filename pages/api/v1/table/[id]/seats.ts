@@ -53,7 +53,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
 
     if (user.tableId !== tableId) {
         return res.status(401).json({
-            error: true, message: 'Not your table.'
+            error: true, message: 'Not your alley.'
         })
     }
 
@@ -68,7 +68,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
 
     if (!table) {
         return res.status(404).json({
-            error: true, message: 'This table does not exist.',
+            error: true, message: 'This alley does not exist.',
         });
     }
 
@@ -81,9 +81,9 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     let newPositions = table.seatPositions.map((s) => members.find(m => m === s) ? s : '')
 
     if (req.method === 'PATCH') {
-        if (!Array.isArray(req.body) || req.body.length != 10) {
+        if (!Array.isArray(req.body) || req.body.length != 7) {
             return res.status(404).json({
-                error: true, message: 'Must update seat position using an array of length 10',
+                error: true, message: 'Must update seat position using an array of length 7',
             });
         }
 
@@ -103,7 +103,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
 
         if (!arrNames.every((e) => members.find((m) => m === e))) {
             return res.status(404).json({
-                error: true, message: 'Array must only contain names of members of the table.',
+                error: true, message: 'Array must only contain names of members of the alley.',
             });
         }
 

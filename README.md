@@ -1,6 +1,6 @@
-# Table booking
+# Bowling booking
 
-A service to create, join and choose seats for tables for formal sit down meals with a seating plan.
+A service to create, join and choose seats for bowling.
 
 ![Image showing the seat booking process](example.png "Seat booking process")
 

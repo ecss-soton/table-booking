@@ -65,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         const userCount = 1 + user.plusOnes.length;
         const realMemberCount = table.members.reduce((sum, m) => m.plusOnes.length + 1 + sum, 0);
 
-        if (realMemberCount > (10 - userCount)  || (!req.body.fromCode && table.locked)) {
+        if (realMemberCount > (7 - userCount)  || (!req.body.fromCode && table.locked)) {
             return res.status(405).json({
                 error: true, message: 'table is already filled or locked.',
             });
@@ -85,6 +85,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         });
 
     } else {
+        // Check if maximum number of tables (8) has been reached
+        const tableCount = await prisma.table.count();
+        if (tableCount >= 8) {
+            return res.status(405).json({
+                error: true, message: 'Maximum number of alleys (8) has been reached.',
+            });
+        }
+
         const user = await prisma.user.update({
             where: {
                 id: attemptedAuth.id,

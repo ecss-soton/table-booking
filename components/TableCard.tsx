@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowTurnUp} from "@fortawesome/free-solid-svg-icons";
 import {Table, User} from "@prisma/client";
 import Link from "next/link";
+import { api } from '../middleware/api';
 
 export function TableCard(table: Table & { userRank?: number, url: string, overfull: boolean }) {
 
@@ -20,7 +21,7 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
     const lockTable = async () => {
         setLockButtonLoading(true);
 
-        const res = await fetch('/api/v1/lock', {
+        const res = await api('/api/v1/lock', {
             method: 'post', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -49,7 +50,7 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
     const joinTable = async () => {
         setJoinButtonLoading(true);
 
-        const res = await fetch('/api/v1/join', {
+        const res = await api('/api/v1/join', {
             method: 'post', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -66,7 +67,7 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
     const leaveTable = async () => {
         setLeaveButtonLoading(true);
 
-        const res = await fetch('/api/v1/leave', {
+        const res = await api('/api/v1/leave', {
             method: 'post', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -111,13 +112,13 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
             <Group>
                 <Button radius="md" disabled={table.locked || table.userRank !== undefined || table.overfull}
                         loading={joinButtonLoading} onClick={joinTable}>
-                    Join Table
+                    Join Alley
                 </Button>
                 {
                     (table.userRank !== undefined) &&
                     <>
                         <Button radius="md" loading={leaveButtonLoading} onClick={leaveTable}>
-                            Leave Table
+                            Leave Alley
                         </Button>
 
                         <Link href="/seat-selection" passHref>

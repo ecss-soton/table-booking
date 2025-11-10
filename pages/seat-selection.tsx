@@ -16,6 +16,7 @@ import React, {EventHandler, KeyboardEvent, KeyboardEventHandler, useRef, useSta
 import {Table} from '@prisma/client';
 import useSWR, {useSWRConfig} from 'swr';
 import fetcher from '../middleware/fetch';
+import { api } from '../middleware/api';
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {useForm} from "@mantine/form";
@@ -69,7 +70,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
         newSeatPos[currentSeatPos] = selectedUser;
 
-        const res = await fetch(`/api/v1/table/${user.tableId}/seats`, {
+        const res = await api(`/api/v1/table/${user.tableId}/seats`, {
             method: 'PATCH', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -131,7 +132,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
                 <div className="flex flex-wrap">
                     <div>
-                        <div className="relative w-[500px] h-[500px]">
+                        <div className="flex flex-col gap-2 justify-center items-center pt-10 pr-20">
                             {
                                 data?.table?.seatPositions?.map((name, i) => {
 
@@ -175,7 +176,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
                     <div>
 
-                        <h2 className='font-bold text-xl m-2'>Your table</h2>
+                        <h2 className='font-bold text-xl m-2'>Your alley</h2>
 
                         {/*<TableSeatCard key={userTable.id} overfull={realMemberCount > (10 - userCount)} userRank={data?.yourRank} url={url} {...userTable} />*/}
 
@@ -183,7 +184,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
                             <Card.Section className="p-4" mt="md">
                                 <Text size="lg" weight={500}>
-                                    Table
+                                    Alley
                                 </Text>
                                 <MantineTable>
                                     <thead>
@@ -232,7 +233,7 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
     if (!session?.microsoft.email) {
         return {
             redirect: {
-                destination: '/signin',
+                destination: '/booking/signin',
                 permanent: false,
             },
         }
