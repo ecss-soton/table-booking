@@ -33,6 +33,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Push to portainer
-        run: |
-          curl -X POST ${{ secrets.PORTAINER_WEBHOOK  }}
+      # - name: Push to portainer
+      #   run: |
+      #     curl -X POST ${{ secrets.PORTAINER_WEBHOOK  }}
