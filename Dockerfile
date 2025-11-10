@@ -9,6 +9,7 @@ WORKDIR /app
 
 COPY package.json ./
 COPY package-lock.json ./
+COPY prisma ./prisma
 
 RUN npm ci
 
@@ -19,16 +20,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-
-COPY prisma ./prisma
-
 RUN npm run build
 
 FROM base AS runner
 WORKDIR /app
 
 # Install OpenSSL for Prisma
-RUN apk add --no-cache openssl
+# RUN apk add --no-cache openssl
 
 ENV NODE_ENV=production
 
