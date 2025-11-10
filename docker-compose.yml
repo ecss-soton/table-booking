@@ -1,0 +1,14 @@
+services:
+  web_booking:
+    image: ecss/web_booking:main
+    container_name: web_booking
+    restart: unless-stopped
+    # networks:
+    #   soton_network:
+    #     ipv4_address: 10.5.0.8
+    env_file:
+      - .env
+    environment:
+      - PORT=3000
+      - NEXTAUTH_URL=https://localhost:3000/booking
+      - BASE_URL=https://localhost:3000/booking
