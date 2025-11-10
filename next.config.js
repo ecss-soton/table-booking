@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
+  experimental: {
+    outputStandalone: true,
+  },
   // basePath: '/booking',
 }
 
