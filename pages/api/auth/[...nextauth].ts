@@ -37,15 +37,31 @@ export const authOptions: NextAuthOptions = {
             return session
         },
         async redirect({ url, baseUrl }) {
-            // Ensure redirects remain within the app and respect basePath when set via NEXTAUTH_URL
-            // If url is a relative path, prefix with baseUrl (which should include basePath when NEXTAUTH_URL is set)
-            if (url.startsWith('/')) return `${baseUrl}${url}`
+            // Extract basePath from NEXTAUTH_URL so that relative redirects include it.
+            // baseUrl only contains origin; we need the full base including path.
+            let basePath = '';
+            try {
+                const nextAuthUrl = process.env.NEXTAUTH_URL;
+                if (nextAuthUrl) {
+                    const parsed = new URL(nextAuthUrl);
+                    basePath = parsed.pathname === '/' ? '' : parsed.pathname;
+                }
+            } catch {}
+
+            // If url is a relative path, prefix with baseUrl + basePath
+            if (url.startsWith('/')) return `${baseUrl}${basePath}${url}`
             try {
                 const target = new URL(url)
                 const base = new URL(baseUrl)
-                if (target.origin === base.origin) return url
+                if (target.origin === base.origin) {
+                    // Same origin: if target path doesn't start with basePath, add it
+                    if (basePath && !target.pathname.startsWith(basePath)) {
+                        return `${baseUrl}${basePath}${target.pathname}${target.search}${target.hash}`
+                    }
+                    return url
+                }
             } catch {}
-            return baseUrl
+            return baseUrl + basePath
         },
         async signIn({ user, account, profile, email, credentials }) {
             const holder = await prisma.ticketHolders.findFirst({
