@@ -3,7 +3,9 @@ const BASE_PATH = '/booking'
 
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
+  experimental: {
+    outputStandalone: true,
+  },
   basePath: BASE_PATH,
   async redirects() {
     // Ensure OAuth providers that call root-level /api/auth/* still work by redirecting to the basePath-prefixed route
