@@ -4,6 +4,7 @@ const nextConfig = {
   experimental: {
     outputStandalone: true,
   },
+  basePath: '/booking',
 }
 
 module.exports = nextConfig
