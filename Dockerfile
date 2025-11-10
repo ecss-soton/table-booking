@@ -26,7 +26,7 @@ FROM base AS runner
 WORKDIR /app
 
 # Install OpenSSL for Prisma
-# RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl
 
 ENV NODE_ENV=production
 
