@@ -4,6 +4,7 @@ import {EventHandler, KeyboardEvent, KeyboardEventHandler, useRef, useState} fro
 import {Table} from '@prisma/client';
 import useSWR from 'swr';
 import fetcher from '../middleware/fetch';
+import { api } from '../middleware/api';
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {useForm} from "@mantine/form";
@@ -32,7 +33,7 @@ export default function Tables({ url, user }: { url: string, user: User }) {
     const createNewTable = async () => {
         setButtonLoading(true);
 
-        const res = await fetch('/api/v1/join', {
+        const res = await api('/api/v1/join', {
             method: 'post', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -57,7 +58,7 @@ export default function Tables({ url, user }: { url: string, user: User }) {
 
     const joinTable = async () => {
 
-        const res = await fetch('/api/v1/join', {
+        const res = await api('/api/v1/join', {
             method: 'post', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -80,7 +81,7 @@ export default function Tables({ url, user }: { url: string, user: User }) {
 
         setUpdateNameLoading(true);
 
-        const res = await fetch('/api/v1/user/update-name', {
+        const res = await api('/api/v1/user/update-name', {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
@@ -188,7 +189,7 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
     if (!session?.microsoft.email) {
         return {
             redirect: {
-                destination: '/signin',
+                destination: '/booking/signin',
                 permanent: false,
             },
         }

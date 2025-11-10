@@ -73,7 +73,7 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
     if (!session?.microsoft.email) {
         return {
             redirect: {
-                destination: '/signin',
+                destination: '/booking/signin',
                 permanent: false,
             },
         }

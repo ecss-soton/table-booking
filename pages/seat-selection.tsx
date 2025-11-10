@@ -16,6 +16,7 @@ import React, {EventHandler, KeyboardEvent, KeyboardEventHandler, useRef, useSta
 import {Table} from '@prisma/client';
 import useSWR, {useSWRConfig} from 'swr';
 import fetcher from '../middleware/fetch';
+import { api } from '../middleware/api';
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {useForm} from "@mantine/form";
@@ -69,7 +70,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
         newSeatPos[currentSeatPos] = selectedUser;
 
-        const res = await fetch(`/api/v1/table/${user.tableId}/seats`, {
+        const res = await api(`/api/v1/table/${user.tableId}/seats`, {
             method: 'PATCH', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -232,7 +233,7 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
     if (!session?.microsoft.email) {
         return {
             redirect: {
-                destination: '/signin',
+                destination: '/booking/signin',
                 permanent: false,
             },
         }

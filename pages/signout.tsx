@@ -60,7 +60,7 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
     if (!session) {
         return {
             redirect: {
-                destination: '/signin',
+                destination: '/booking/signin',
                 permanent: false,
             },
         }

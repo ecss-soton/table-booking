@@ -2,6 +2,7 @@ import {Button, TextInput} from '@mantine/core';
 import React, {useState} from 'react';
 import Link from "next/link";
 import QrCodeReader from "react-qrcode-reader";
+import { api } from '../middleware/api';
 
 export default function Qr() {
     interface ICheckedIn {
@@ -18,7 +19,7 @@ export default function Qr() {
 
     const checkIn = async (id: string) => {
         setShowScanner(false)
-        const res = await fetch("/api/v1/checkin", {
+        const res = await api("/api/v1/checkin", {
             method: "post",
             headers: {
                 'Accept': 'application/json',
