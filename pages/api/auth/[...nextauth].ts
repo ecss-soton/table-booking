@@ -10,7 +10,8 @@ export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
     pages: {
         signIn: '/signin',
-        signOut: '/signout'
+        signOut: '/signout',
+
     },
     providers: [
         AzureADProvider({
@@ -34,6 +35,17 @@ export const authOptions: NextAuthOptions = {
             };
             session.id = user.id;
             return session
+        },
+        async redirect({ url, baseUrl }) {
+            // Ensure redirects remain within the app and respect basePath when set via NEXTAUTH_URL
+            // If url is a relative path, prefix with baseUrl (which should include basePath when NEXTAUTH_URL is set)
+            if (url.startsWith('/')) return `${baseUrl}${url}`
+            try {
+                const target = new URL(url)
+                const base = new URL(baseUrl)
+                if (target.origin === base.origin) return url
+            } catch {}
+            return baseUrl
         },
         async signIn({ user, account, profile, email, credentials }) {
             const holder = await prisma.ticketHolders.findFirst({
