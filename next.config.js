@@ -4,7 +4,7 @@ const nextConfig = {
   experimental: {
     outputStandalone: true,
   },
-  basePath: process.env.BASE_PATH || ''
+  basePath: '/winterball'
 }
 
 module.exports = nextConfig
