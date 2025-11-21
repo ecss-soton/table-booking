@@ -10,8 +10,10 @@ export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
     pages: {
         signIn: '/signin',
-        signOut: '/signout'
+        signOut: '/signout',
+
     },
+    secret: process.env.NEXTAUTH_SECRET,
     providers: [
         AzureADProvider({
             clientId: String(process.env.AZURE_AD_CLIENT_ID),
@@ -43,6 +45,7 @@ export const authOptions: NextAuthOptions = {
             })
 
             return !!holder;
+            // return true
         }
     }
 };

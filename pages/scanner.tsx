@@ -18,7 +18,7 @@ export default function Qr() {
 
     const checkIn = async (id: string) => {
         setShowScanner(false)
-        const res = await fetch("/api/v1/checkin", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/v1/checkin`, {
             method: "post",
             headers: {
                 'Accept': 'application/json',

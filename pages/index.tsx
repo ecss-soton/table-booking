@@ -24,11 +24,11 @@ export default function Home({ session, user, url, table }: { session: Session, 
                 <div className='flex flex-row justify-center'>
                     {dark ? <img
                         className='max-h-72'
-                        src="./WinterBallGF_1.png"
+                        src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/WinterBallGF_1.png`}
                         alt="ECSS winter ball logo"
                     /> : <img
                         className='max-h-72'
-                        src="./WinterBallGF_1.png"
+                        src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/WinterBallGF_1.png`}
                         alt="ECSS winter ball logo"
                     />}
 

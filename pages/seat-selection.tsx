@@ -33,6 +33,8 @@ import {IconArmchair} from "@tabler/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowTurnUp} from "@fortawesome/free-solid-svg-icons";
 
+const base = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
 
 export default function Tables({url, user, userTable}: { url: string, user: User, userTable: Table }) {
 
@@ -69,7 +71,7 @@ export default function Tables({url, user, userTable}: { url: string, user: User
 
         newSeatPos[currentSeatPos] = selectedUser;
 
-        const res = await fetch(`/api/v1/table/${user.tableId}/seats`, {
+        const res = await fetch(`${base}/api/v1/table/${user.tableId}/seats`, {
             method: 'PATCH', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
