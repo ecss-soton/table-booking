@@ -7,7 +7,7 @@ import {faArrowTurnUp} from "@fortawesome/free-solid-svg-icons";
 import {Table, User} from "@prisma/client";
 import Link from "next/link";
 
-const base = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const base = '/winterball';
 
 export function TableCard(table: Table & { userRank?: number, url: string, overfull: boolean }) {
 

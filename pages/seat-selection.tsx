@@ -33,7 +33,7 @@ import {IconArmchair} from "@tabler/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowTurnUp} from "@fortawesome/free-solid-svg-icons";
 
-const base = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const base = '/winterball';
 
 
 export default function Tables({url, user, userTable}: { url: string, user: User, userTable: Table }) {
