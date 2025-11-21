@@ -85,6 +85,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         });
 
     } else {
+        // Check if we already have 19 tables (maximum allowed)
+        const tableCount = await prisma.table.count();
+        if (tableCount >= 19) {
+            return res.status(405).json({
+                error: true, message: 'Maximum number of tables (19) has been reached. Please join an existing table.',
+            });
+        }
+
         const user = await prisma.user.update({
             where: {
                 id: attemptedAuth.id,

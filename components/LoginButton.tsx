@@ -15,7 +15,7 @@ export const LoginButton: React.FC = () => {
                     <div className='flex-none pr-2'>
                         <FontAwesomeIcon icon={faMicrosoft} className='text-[#005C85] text-lg h-4 w-5'/>
                     </div>
-                    <div className='flex-auto grow-1' onClick={() => signOut()}>
+                    <div className='flex-auto grow-1' onClick={() => signOut({ callbackUrl: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}` })}>
                         {session.microsoft.email}
                     </div>
                 </div>
@@ -25,7 +25,7 @@ export const LoginButton: React.FC = () => {
     } else {
         return (
             <>
-                <div onClick={() => signIn('azure-ad')}
+                <div onClick={() => signIn('azure-ad', { callbackUrl: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}` })}
                      className="cursor-pointer h-11 w-64 text-white max-w-300 bg-[#005C85] hover:bg-[#024460] rounded-md flex p-3 flex-row items-center justify-center m-2">
                     <div className='flex-none pr-2'>
                         <FontAwesomeIcon icon={faMicrosoft} className='text-white text-lg h-4 w-5'/>

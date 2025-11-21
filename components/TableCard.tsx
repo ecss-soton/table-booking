@@ -7,6 +7,8 @@ import {faArrowTurnUp} from "@fortawesome/free-solid-svg-icons";
 import {Table, User} from "@prisma/client";
 import Link from "next/link";
 
+const base = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
 export function TableCard(table: Table & { userRank?: number, url: string, overfull: boolean }) {
 
     const { colorScheme } = useMantineColorScheme();
@@ -20,7 +22,7 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
     const lockTable = async () => {
         setLockButtonLoading(true);
 
-        const res = await fetch('/api/v1/lock', {
+        const res = await fetch(`${base}/api/v1/lock`, {
             method: 'post', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -29,7 +31,7 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
         });
 
         if (res.ok) {
-            await mutate('/api/v1/tables', (oldData: any) => {
+            await mutate(`/api/v1/tables`, (oldData: any) => {
                 // Need to deep copy the data
                 let data: {
                     yourTable?: string, yourRank?: number, tables: Table[]
@@ -49,7 +51,7 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
     const joinTable = async () => {
         setJoinButtonLoading(true);
 
-        const res = await fetch('/api/v1/join', {
+        const res = await fetch(`${base}/api/v1/join`, {
             method: 'post', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -58,7 +60,7 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
         });
 
         if (res.ok) {
-            await mutate('/api/v1/tables')
+            await mutate(`/api/v1/tables`)
             setJoinButtonLoading(false);
         }
     };
@@ -66,7 +68,7 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
     const leaveTable = async () => {
         setLeaveButtonLoading(true);
 
-        const res = await fetch('/api/v1/leave', {
+        const res = await fetch(`${base}/api/v1/leave`, {
             method: 'post', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -75,7 +77,7 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
         });
 
         if (res.ok) {
-            await mutate('/api/v1/tables')
+            await mutate(`/api/v1/tables`)
             setLeaveButtonLoading(false);
         }
     }

@@ -17,21 +17,23 @@ import prisma from "../prisma/client";
 import {User} from "@prisma/client";
 import axios from "axios";
 
+const base = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
 export default function Tables({ url, user }: { url: string, user: User }) {
 
 
 
     const {data, mutate} = useSWR<{
         yourTable?: string, yourRank?: number, tables: Table[]
-    }>('/api/v1/tables', fetcher, {refreshInterval: 3000});
+    }>(`/api/v1/tables`, fetcher, {refreshInterval: 3000});
 
     const [buttonLoading, setButtonLoading] = useState(false);
-    const [createTableError, setCreateTableError] = useState(false);
+    const [createTableError, setCreateTableError] = useState<string | null>(null);
 
     const createNewTable = async () => {
         setButtonLoading(true);
 
-        const res = await fetch('/api/v1/join', {
+        const res = await fetch(`${base}/api/v1/join`, {
             method: 'post', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -44,8 +46,14 @@ export default function Tables({ url, user }: { url: string, user: User }) {
             await mutate();
             setButtonLoading(false);
         } else {
-            setCreateTableError(true);
-            setTimeout(() => setCreateTableError(false), 5_000);
+            try {
+                const errorData = await res.json();
+                setCreateTableError(errorData.message || 'Failed to create table');
+            } catch {
+                setCreateTableError('Failed to create table');
+            }
+            setButtonLoading(false);
+            setTimeout(() => setCreateTableError(null), 7_000);
         }
     };
 
@@ -55,8 +63,8 @@ export default function Tables({ url, user }: { url: string, user: User }) {
     const [joinedFromCode, setjoinedFromCode] = useState(false);
 
     const joinTable = async () => {
-
-        const res = await fetch('/api/v1/join', {
+        
+        const res = await fetch(`${base}/api/v1/join`, {
             method: 'post', headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json'
             },
@@ -105,6 +113,11 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                         <Button className="mx-5" color={!createTableError ? 'default' : 'red'} disabled={!data?.tables} loading={buttonLoading} onClick={createNewTable}>
                             Create new table
                         </Button>
+                        {createTableError && (
+                            <div className="mx-5 text-red-600 text-sm max-w-sm">
+                                {createTableError}
+                            </div>
+                        )}
                         <Link href="/" passHref>
                             <Button variant='outline' className='mx-5' component="a">
                                 Back
