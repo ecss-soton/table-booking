@@ -30,11 +30,11 @@ export default function SignOut() {
                 <div className='flex flex-row justify-center'>
                     {dark ? <img
                         className='max-h-72'
-                        src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/WinterBallGF_1.png`}
+                        src={`/winterball/WinterBallGF_1.png`}
                         alt="ECSS Winter ball logo"
                     /> : <img
                         className='max-h-72'
-                        src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/WinterBallGF_1.png`}
+                        src={`/winterball/WinterBallGF_1.png`}
                         alt="ECSS Winter ball logo"
                     />}
 

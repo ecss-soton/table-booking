@@ -23,7 +23,7 @@ export default function MyApp({
         setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
     return (
-        <SessionProvider session={session} basePath={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/auth`}>
+        <SessionProvider session={session} basePath={`/winterball/api/auth`}>
             <Head>
                 <title>ECSS Winter ball</title>
                 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>

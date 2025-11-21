@@ -17,7 +17,7 @@ import prisma from "../prisma/client";
 import {User} from "@prisma/client";
 import axios from "axios";
 
-const base = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const base = '/winterball';
 
 export default function Tables({ url, user }: { url: string, user: User }) {
 
