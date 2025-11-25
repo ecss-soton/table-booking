@@ -10,24 +10,26 @@ import {number} from "prop-types";
     console.log('Starting ticket holder import...');
 
     createReadStream("./doorlist.csv")
-        .pipe(parse({ delimiter: ",", from_line: 1 }))
+        .pipe(parse({ delimiter: ",", from_line: 2 }))
         .on("data", (row) => {
-            console.log('Processing row:', row);
-            const name = row[0];
-            // const buyerName = row[10];
-            const sotonId = row[1].split('@')[0]
+            if (row[7].includes("Menu")){
+                console.log('Processing row:', row);
+                const name = row[1];
+                const buyerName = row[1];
+                const sotonId = row[2].split('@')[0];
+                const qty = parseInt(row[3]);
 
-            if (row[1].split('@')[1] !== 'soton.ac.uk') {
-                console.error(`Found non soton.ac.uk email address: ${row[1]}`);
-            }
+                if (row[1].split('@')[1] !== 'soton.ac.uk') {
+                    console.error(`Found non soton.ac.uk email address: ${row[2]}`);
+                }
+                
+                timesSeen[sotonId] = (timesSeen[sotonId] ?? 0) + qty;
+                ticketHolders[sotonId] = {sotonId, name: name, plusOnes: ticketHolders[sotonId]?.plusOnes ?? []}
 
-            timesSeen[sotonId] = (timesSeen[sotonId] ?? 0) + 1;
-            ticketHolders[sotonId] = {sotonId, name: name, plusOnes: ticketHolders[sotonId]?.plusOnes ?? []}
-
-            // if (buyerName !== name) {
-            //     ticketHolders[sotonId].plusOnes.push(name)
-            // }
-        })
+                if (timesSeen[sotonId] > 1) {
+                    ticketHolders[sotonId].plusOnes.push(name)
+                }
+        }})
         .on("end", async () => {
             console.log('CSV parsing complete. Total ticket holders found:', Object.keys(ticketHolders).length);
             console.log('Ticket holders data:', JSON.stringify(ticketHolders, null, 2));
