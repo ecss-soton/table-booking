@@ -29,6 +29,10 @@ export default function Tables({ url, user }: { url: string, user: User }) {
 
     const [buttonLoading, setButtonLoading] = useState(false);
     const [createTableError, setCreateTableError] = useState<string | null>(null);
+    const [nameInput, setNameInput] = useState(user.displayName);
+    const [updateNameLoading, setUpdateNameLoading] = useState(false);
+    const [updateNameError, setUpdateNameError] = useState(false);
+
 
     const createNewTable = async () => {
         setButtonLoading(true);
@@ -78,6 +82,34 @@ export default function Tables({ url, user }: { url: string, user: User }) {
         }
     };
 
+    const updateFirstName = async () => {
+        if (!nameInput.trim()) {
+            setUpdateNameError(true);
+            setTimeout(() => setUpdateNameError(false), 5_000);
+            return;
+        }
+
+        setUpdateNameLoading(true);
+
+        const res = await fetch(`${base}/api/v1/user/update-name`, {
+            method: 'PATCH',
+            headers: {
+                'Accept': 'application/json', 'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: nameInput })
+        });
+
+        if (res.ok) {
+            setUpdateNameLoading(false);
+            // Update the user object in the page
+            user.firstName = nameInput;
+        } else {
+            setUpdateNameError(true);
+            setTimeout(() => setUpdateNameError(false), 5_000);
+            setUpdateNameLoading(false);
+        }
+    };
+
     if (data?.tables && data.tables.length != 0) {
         data.tables.sort(t => t.id === data.yourTable ? -1 : 1)
     }
@@ -87,6 +119,26 @@ export default function Tables({ url, user }: { url: string, user: User }) {
             <div className='flex flex-col items-center justify-center w-full flex-1 px-5 text-center'>
                 <h1 className="font-bold text-2xl m-2">View tables</h1>
                 <div className="flex flex-wrap flex-col">
+                    <Card className="m-5" withBorder radius="md" p="md">
+                        <Card.Section className="p-4" mt="md">
+                            <h3 className="font-bold text-lg mb-3">Update your name</h3>
+                            <div className="flex flex-row gap-3 items-end justify-center">
+                                <TextInput
+                                    placeholder="Name"
+                                    value={nameInput}
+                                    onChange={(e) => setNameInput(e.currentTarget.value)}
+                                    style={{ flex: 1, maxWidth: '300px' }}
+                                />
+                                <Button
+                                    onClick={updateFirstName}
+                                    loading={updateNameLoading}
+                                    color={updateNameError ? 'red' : 'blue'}
+                                >
+                                    Update Name
+                                </Button>
+                            </div>
+                        </Card.Section>
+                    </Card>
                     <Modal
                         opened={joinedFromCode || !!join}
                         onClose={() => {
