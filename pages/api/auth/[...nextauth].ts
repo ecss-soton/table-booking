@@ -80,7 +80,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 }
             })
 
-            const data = sotonVerifyData.data as {
+            const data = (sotonVerifyData.data as unknown) as {
                 sotonId: string;
                 firstName: string;
                 lastName: string;
