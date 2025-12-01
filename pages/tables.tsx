@@ -16,10 +16,11 @@ import {authOptions} from "./api/auth/[...nextauth]";
 import prisma from "../prisma/client";
 import {User} from "@prisma/client";
 import axios from "axios";
+import { isAdmin } from "../lib/adminUtils";
 
 const base = '/winterball';
 
-export default function Tables({ url, user }: { url: string, user: User }) {
+export default function Tables({ url, user, isAdmin: userIsAdmin }: { url: string, user: User, isAdmin: boolean }) {
 
 
 
@@ -184,12 +185,12 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                         // @ts-ignore
                         const realMemberCount = v.members.reduce((sum, m) => m.plusOnes.length + 1 + sum, 0);
                         if (v.id === data.yourTable) {
-                            return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} userRank={data.yourRank} url={url} {...v} />);
+                            return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} userRank={data.yourRank} url={url} isAdmin={userIsAdmin} {...v} />);
                         }
-                        if (v.locked || realMemberCount > (10 - userCount)) {
+                        if (realMemberCount > (10 - userCount)) {
                             return <></>;
                         }
-                        return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} url={url} {...v}/>);
+                        return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} url={url} isAdmin={userIsAdmin} {...v}/>);
                     })) : <p>There are not currently any tables you can join</p>}
 
                 </div>
@@ -211,6 +212,9 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
     }
 
     const sotonId = session.microsoft.email.split('@')[0];
+
+    // Check if user is admin
+    const userIsAdmin = isAdmin(sotonId);
 
     // Get current plusOnes from TicketHolders table
     const holder = await prisma.ticketHolders.findFirst({
@@ -235,6 +239,7 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
         props: {
             url: process.env.NEXTAUTH_URL,
             user: JSON.parse(JSON.stringify(user)),
+            isAdmin: userIsAdmin,
         },
     }
 }

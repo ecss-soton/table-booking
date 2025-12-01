@@ -1,4 +1,4 @@
-import {IconArrowForward, IconLock, IconLockOpen, IconShare} from '@tabler/icons';
+import {IconArrowForward, IconLock, IconLockOpen, IconShare, IconTrash} from '@tabler/icons';
 import {ActionIcon, Button, Card, CopyButton, Group, Table as MantineTable, Text, Tooltip, useMantineColorScheme} from '@mantine/core';
 import {useState} from 'react';
 import {useSWRConfig} from 'swr';
@@ -9,13 +9,14 @@ import Link from "next/link";
 
 const base = '/winterball';
 
-export function TableCard(table: Table & { userRank?: number, url: string, overfull: boolean }) {
+export function TableCard(table: Table & { userRank?: number, url: string, overfull: boolean, isAdmin?: boolean }) {
 
     const { colorScheme } = useMantineColorScheme();
 
     const [lockButtonLoading, setLockButtonLoading] = useState(false);
     const [joinButtonLoading, setJoinButtonLoading] = useState(false);
     const [leaveButtonLoading, setLeaveButtonLoading] = useState(false);
+    const [deleteButtonLoading, setDeleteButtonLoading] = useState(false);
 
     const {mutate} = useSWRConfig();
 
@@ -82,6 +83,31 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
         }
     }
 
+    const deleteTable = async () => {
+        if (!confirm(`Are you sure you want to delete table ${table.id}? This will remove all members from the table.`)) {
+            return;
+        }
+
+        setDeleteButtonLoading(true);
+
+        const res = await fetch(`${base}/api/v1/admin/delete-table`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json', 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ tableId: table.id })
+        });
+
+        if (res.ok) {
+            await mutate(`/api/v1/tables`);
+            setDeleteButtonLoading(false);
+        } else {
+            setDeleteButtonLoading(false);
+            alert('Failed to delete table');
+        }
+    }
+
     const yourBgColour = colorScheme === 'dark' ? '#1e1e23' : '#e0e0e0'
 
     let memberCount = -1;
@@ -145,7 +171,23 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
                         <ActionIcon variant="default" radius="md" size={36} loading={lockButtonLoading} onClick={lockTable}>
                             {table.locked ? <IconLock size={18} stroke={1.5}/> : <IconLockOpen size={18} stroke={1.5}/>}
                         </ActionIcon>
-
+                    </>
+                }
+                {
+                    table.isAdmin &&
+                    <>
+                        <Tooltip label="Delete Table (Admin)" withArrow>
+                            <ActionIcon 
+                                variant="default" 
+                                radius="md" 
+                                size={36} 
+                                loading={deleteButtonLoading} 
+                                onClick={deleteTable}
+                                color="red"
+                            >
+                                <IconTrash size={18} stroke={1.5}/>
+                            </ActionIcon>
+                        </Tooltip>
                     </>
                 }
             </Group>
