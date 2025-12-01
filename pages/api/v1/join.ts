@@ -96,7 +96,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         const tableCount = await prisma.table.count();
         if (tableCount >= 17) {
             return res.status(405).json({
-                error: true, message: 'Maximum number of tables (19) has been reached. Please join an existing table.',
+                error: true, message: 'Maximum number of tables has been reached. Please join an existing table.',
             });
         }
 
