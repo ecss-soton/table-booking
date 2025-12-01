@@ -65,7 +65,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         const userCount = 1 + user.plusOnes.length;
         const realMemberCount = table.members.reduce((sum, m) => m.plusOnes.length + 1 + sum, 0);
 
-        if (realMemberCount > (10 - userCount)  || (!req.body.fromCode && table.locked)) {
+        //UNLOCK THIS!!!!
+        // if (realMemberCount > (10 - userCount)  || (!req.body.fromCode && table.locked)) {
+        //     return res.status(405).json({
+        //         error: true, message: 'table is already filled or locked.',
+        //     });
+        // }
+
+        if (realMemberCount > (10 - userCount)) {
             return res.status(405).json({
                 error: true, message: 'table is already filled or locked.',
             });

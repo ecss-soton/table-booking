@@ -186,7 +186,7 @@ export default function Tables({ url, user }: { url: string, user: User }) {
                         if (v.id === data.yourTable) {
                             return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} userRank={data.yourRank} url={url} {...v} />);
                         }
-                        if (realMemberCount > (10 - userCount)) {
+                        if (v.locked || realMemberCount > (10 - userCount)) {
                             return <></>;
                         }
                         return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} url={url} {...v}/>);
