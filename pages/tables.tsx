@@ -210,12 +210,26 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
         }
     }
 
-    const user = await prisma.user.findUnique({
+    const sotonId = session.microsoft.email.split('@')[0];
+
+    // Get current plusOnes from TicketHolders table
+    const holder = await prisma.ticketHolders.findFirst({
         where: {
-            sotonId: session.microsoft.email.split('@')[0],
-        },
+            sotonId: sotonId
+        }
     });
 
+    const currentPlusOnes = holder?.plusOnes || [];
+
+    // Update user with latest plusOnes data
+    const user = await prisma.user.update({
+        where: {
+            sotonId: sotonId,
+        },
+        data: {
+            plusOnes: currentPlusOnes
+        }
+    });
 
     return {
         props: {
