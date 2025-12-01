@@ -127,7 +127,8 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
 
     res.status(200).json({
         table: {
-            locked: table.locked, id: table.id, seatPositions: table.seatPositions, members: table.members.map((member) => {
+            // locked: table.locked, id: table.id, seatPositions: table.seatPositions, members: table.members.map((member) => {
+            locked: true, id: table.id, seatPositions: table.seatPositions, members: table.members.map((member) => {
                 return {
                     name: member.displayName ?? '',
                     plusOnes: member.plusOnes ?? [],
