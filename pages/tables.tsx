@@ -16,11 +16,11 @@ import {authOptions} from "./api/auth/[...nextauth]";
 import prisma from "../prisma/client";
 import {User} from "@prisma/client";
 import axios from "axios";
-import { isAdmin } from "../lib/adminUtils";
+import { isAdmin, isBookingOpen } from "../lib/adminUtils";
 
 const base = '/winterball';
 
-export default function Tables({ url, user, isAdmin: userIsAdmin }: { url: string, user: User, isAdmin: boolean }) {
+export default function Tables({ url, user, isAdmin: userIsAdmin, bookingOpen }: { url: string, user: User, isAdmin: boolean, bookingOpen: boolean }) {
 
 
 
@@ -163,9 +163,14 @@ export default function Tables({ url, user, isAdmin: userIsAdmin }: { url: strin
                         </div>
                     </Modal>
                     <div className='flex flex-wrap flex-row items-end'>
-                        <Button className="mx-5" color={!createTableError ? 'default' : 'red'} disabled={!data?.tables} loading={buttonLoading} onClick={createNewTable}>
+                        <Button className="mx-5" color={!createTableError ? 'default' : 'red'} disabled={!data?.tables || (!bookingOpen && !userIsAdmin)} loading={buttonLoading} onClick={createNewTable}>
                             Create new table
                         </Button>
+                        {!bookingOpen && !userIsAdmin && (
+                            <div className="mx-5 text-orange-600 text-sm max-w-sm">
+                                Table booking is currently closed
+                            </div>
+                        )}
                         {createTableError && (
                             <div className="mx-5 text-red-600 text-sm max-w-sm">
                                 {createTableError}
@@ -185,12 +190,12 @@ export default function Tables({ url, user, isAdmin: userIsAdmin }: { url: strin
                         // @ts-ignore
                         const realMemberCount = v.members.reduce((sum, m) => m.plusOnes.length + 1 + sum, 0);
                         if (v.id === data.yourTable) {
-                            return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} userRank={data.yourRank} url={url} isAdmin={userIsAdmin} {...v} />);
+                            return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} userRank={data.yourRank} url={url} isAdmin={userIsAdmin} bookingOpen={bookingOpen} {...v} />);
                         }
                         if (realMemberCount > (10 - userCount)) {
                             return <></>;
                         }
-                        return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} url={url} isAdmin={userIsAdmin} {...v}/>);
+                        return (<TableCard key={v.id} overfull={realMemberCount > (10 - userCount)} url={url} isAdmin={userIsAdmin} bookingOpen={bookingOpen} {...v}/>);
                     })) : <p>There are not currently any tables you can join</p>}
 
                 </div>
@@ -216,6 +221,9 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
     // Check if user is admin
     const userIsAdmin = isAdmin(sotonId);
 
+    // Check if booking system is open
+    const bookingSystemOpen = isBookingOpen();
+
     // Get current plusOnes from TicketHolders table
     const holder = await prisma.ticketHolders.findFirst({
         where: {
@@ -240,6 +248,7 @@ export async function getServerSideProps(context: { req: (IncomingMessage & { co
             url: process.env.NEXTAUTH_URL,
             user: JSON.parse(JSON.stringify(user)),
             isAdmin: userIsAdmin,
+            bookingOpen: bookingSystemOpen,
         },
     }
 }

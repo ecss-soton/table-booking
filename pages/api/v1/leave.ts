@@ -2,6 +2,7 @@ import {NextApiRequest, NextApiResponse} from 'next';
 import prisma from '../../../prisma/client';
 import {unstable_getServerSession} from 'next-auth';
 import {authOptions} from '../auth/[...nextauth]';
+import { isBookingOpen, isAdmin } from '../../../lib/adminUtils';
 
 // interface RequestData {
 //   table?: string
@@ -22,6 +23,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     if (!attemptedAuth?.microsoft.email) {
         return res.status(400).json({
             error: true, message: 'You must include the session token with the Authorization header',
+        });
+    }
+
+    // Check if booking system is open (admins can always leave)
+    const sotonId = attemptedAuth.microsoft.email.split('@')[0];
+    if (!isBookingOpen() && !isAdmin(sotonId)) {
+        return res.status(403).json({
+            error: true, message: 'Table booking is currently closed.',
         });
     }
 

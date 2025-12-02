@@ -12,3 +12,7 @@ export function getAdminsList(): string[] {
     
     return adminsList.split(',').map(id => id.trim());
 }
+
+export function isBookingOpen(): boolean {
+    return process.env.BOOKING_SYSTEM_OPEN === 'true';
+}

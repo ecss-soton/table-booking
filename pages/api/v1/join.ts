@@ -2,7 +2,8 @@ import {NextApiRequest, NextApiResponse} from 'next';
 import prisma from '../../../prisma/client';
 import {unstable_getServerSession} from 'next-auth';
 import {authOptions} from '../auth/[...nextauth]';
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
+import { isBookingOpen, isAdmin } from '../../../lib/adminUtils';
 
 // interface RequestData {
 //   table?: string
@@ -35,6 +36,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     if (!user) {
         return res.status(404).json({
             error: true, message: 'This user does not exist.',
+        });
+    }
+
+    // Check if booking system is open (admins can always join)
+    const sotonId = attemptedAuth.microsoft.email.split('@')[0];
+    if (!isBookingOpen() && !isAdmin(sotonId)) {
+        return res.status(403).json({
+            error: true, message: 'Table booking is currently closed.',
         });
     }
 

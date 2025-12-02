@@ -9,7 +9,7 @@ import Link from "next/link";
 
 const base = '/winterball';
 
-export function TableCard(table: Table & { userRank?: number, url: string, overfull: boolean, isAdmin?: boolean }) {
+export function TableCard(table: Table & { userRank?: number, url: string, overfull: boolean, isAdmin?: boolean, bookingOpen?: boolean }) {
 
     const { colorScheme } = useMantineColorScheme();
 
@@ -137,14 +137,14 @@ export function TableCard(table: Table & { userRank?: number, url: string, overf
             </Card.Section>
 
             <Group>
-                <Button radius="md" disabled={table.locked || table.userRank !== undefined || table.overfull}
+                <Button radius="md" disabled={table.locked || table.userRank !== undefined || table.overfull || (!table.bookingOpen && !table.isAdmin)}
                         loading={joinButtonLoading} onClick={joinTable}>
                     Join Table
                 </Button>
                 {
                     (table.userRank !== undefined) &&
                     <>
-                        <Button radius="md" loading={leaveButtonLoading} onClick={leaveTable}>
+                        <Button radius="md" loading={leaveButtonLoading} onClick={leaveTable} disabled={!table.bookingOpen && !table.isAdmin}>
                             Leave Table
                         </Button>
 
